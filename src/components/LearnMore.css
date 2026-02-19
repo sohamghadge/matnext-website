@@ -1,0 +1,138 @@
+.learn-section {
+    background: var(--bg-section);
+}
+
+.learn-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+}
+
+.learn-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    transition: all var(--transition);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.learn-grid.visible .learn-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.learn-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary);
+}
+
+.learn-card:hover .learn-arrow {
+    color: var(--primary);
+    transform: translate(2px, -2px);
+}
+
+.learn-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.learn-tag {
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.learn-tag-blog {
+    background: rgba(239, 83, 80, 0.1);
+    color: #EF5350;
+}
+
+.learn-tag-guide {
+    background: rgba(0, 213, 99, 0.1);
+    color: var(--primary);
+}
+
+.learn-date,
+.learn-time {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.learn-card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: auto;
+    padding-bottom: 20px;
+}
+
+.learn-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.learn-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.learn-author-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--bg-dark);
+}
+
+.learn-author-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.learn-author-role {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.learn-arrow {
+    color: var(--text-muted);
+    transition: all var(--transition);
+}
+
+@media (max-width: 1024px) {
+    .learn-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .learn-grid {
+        grid-template-columns: 1fr;
+    }
+}

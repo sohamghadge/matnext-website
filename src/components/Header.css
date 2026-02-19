@@ -1,0 +1,229 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    transition: all var(--transition);
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    gap: 24px;
+}
+
+
+
+.header-logo {
+    flex-shrink: 0;
+}
+
+.header-logo img {
+    height: 36px;
+    width: auto;
+    display: block;
+    /* Ensure no line-height issues */
+}
+
+
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    /* Reduce gap slightly */
+}
+
+.nav-link {
+    padding: 8px 12px;
+    /* Reduce padding */
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    transition: all var(--transition);
+    white-space: nowrap;
+    /* Prevent wrapping */
+}
+
+
+
+.nav-link:hover {
+    color: var(--text);
+    background: var(--bg-section);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+
+.lang-toggle {
+    display: flex;
+    background: var(--bg-section);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+}
+
+.lang-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all var(--transition);
+}
+
+.lang-btn.active {
+    background: var(--primary);
+    color: var(--bg-dark);
+}
+
+.btn-login {
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    transition: all var(--transition);
+}
+
+.btn-login:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.header-cta {
+    /* width: 230px; Removed fixed width to fit content */
+    /* height: 40px; */
+    white-space: nowrap;
+    /* This rule was previously duplicated and had a stray brace after it */
+}
+
+.mobile-toggle {
+    display: none;
+    background: none;
+    color: var(--text);
+    padding: 4px;
+}
+
+
+/* Mobile/Tablet Styles (<1280px) */
+@media (max-width: 1280px) {
+    .header-nav {
+        display: none;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        flex-direction: column;
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        box-shadow: var(--shadow-md);
+        height: calc(100vh - 72px);
+        /* Full height on mobile */
+        overflow-y: auto;
+    }
+
+    .header-nav.open {
+        display: flex;
+    }
+
+    .nav-link {
+        width: 100%;
+        padding: 16px;
+        font-size: 16px;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .nav-link:last-child {
+        border-bottom: none;
+    }
+
+    .mobile-toggle {
+        display: flex;
+    }
+
+    /* Hide desktop actions */
+    .header-actions .lang-toggle,
+    .header-actions .btn-login,
+    .header-actions .header-cta {
+        display: none;
+    }
+}
+
+.mobile-lang-toggle {
+    display: none;
+    gap: 8px;
+    margin-top: 24px;
+    padding-top: 16px;
+    justify-content: center;
+}
+
+.mobile-actions {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+    width: 100%;
+    align-items: center;
+}
+
+.mobile-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+}
+
+@media (max-width: 1280px) {
+
+    .mobile-lang-toggle,
+    .mobile-actions {
+        display: flex;
+    }
+
+    /* Ensure Login button is visible in mobile menu even if hidden in header */
+    .mobile-actions .btn-login {
+        display: flex;
+    }
+}
+
+/* Logo Fixes */
+.blend-multiply {
+    mix-blend-mode: multiply;
+}
+
+/* Mobile M-Icon only logic */
+@media (max-width: 768px) {
+    .header-logo {
+        width: 40px;
+        overflow: hidden;
+        display: block;
+    }
+
+    .header-logo img {
+        width: 140px;
+        /* Zoom in */
+        max-width: none;
+        height: 40px;
+        object-fit: cover;
+        object-position: left center;
+        /* Show only left part (M) */
+    }
+}
