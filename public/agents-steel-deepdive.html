@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MANJU — 35 Agents Deep Dive: Steel Circular Value Chain</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:    #0D1B2A; --navy2: #1A3A52; --navy3: #0A2540; --navy4: #162433;
+  --mint:    #02C39A; --teal:  #028090; --amber: #F4A261; --red:   #E63946;
+  --purple:  #9B59B6; --blue:  #378ADD; --green: #48BB78; --steel: #7F8C9A;
+  --orange:  #E67E22; --cyan:  #17A589;
+  --white:   #FFFFFF; --grey1: #A0AEC0; --grey2: #4A5568; --grey3: #1E3448; --grey4: #243B55;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--navy); font-family: 'Poppins', sans-serif; color: var(--white); min-width: 1400px; }
+
+/* HEADER */
+.page-header { background: var(--navy3); border-bottom: 2px solid rgba(2,195,154,.25); padding: 22px 48px 18px; display: flex; align-items: flex-start; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.wordmark { font-size: 36px; font-weight: 900; letter-spacing: -.03em; line-height: 1; }
+.wordmark .ju { color: var(--mint); }
+.wordmark .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--mint); margin-left: 2px; vertical-align: middle; margin-bottom: 4px; }
+.hdr-sub { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--grey1); letter-spacing: .13em; text-transform: uppercase; margin-top: 5px; }
+.hdr-right { text-align: right; }
+.hdr-tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--mint); letter-spacing: .15em; text-transform: uppercase; margin-bottom: 3px; }
+.hdr-title { font-size: 15px; font-weight: 700; line-height: 1.2; }
+.hdr-desc { font-size: 9px; color: var(--grey1); font-weight: 300; margin-top: 3px; max-width: 440px; line-height: 1.5; }
+
+/* PHASE NAV */
+.phase-nav { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid rgba(255,255,255,.06); background: var(--navy4); }
+.phase-tab { padding: 12px 18px; border-right: 1px solid rgba(255,255,255,.06); position: relative; }
+.phase-tab:last-child { border-right: none; }
+.phase-num { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 3px; }
+.phase-name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+.phase-detail { font-size: 8.5px; color: var(--grey1); font-weight: 300; line-height: 1.4; }
+.phase-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.ph-red .phase-num, .ph-red .phase-name { color: var(--red); } .ph-red .phase-bar { background: var(--red); }
+.ph-orange .phase-num, .ph-orange .phase-name { color: var(--orange); } .ph-orange .phase-bar { background: var(--orange); }
+.ph-steel .phase-num, .ph-steel .phase-name { color: var(--steel); } .ph-steel .phase-bar { background: var(--steel); }
+.ph-mint .phase-num, .ph-mint .phase-name { color: var(--mint); } .ph-mint .phase-bar { background: var(--mint); }
+
+/* SECTION HEADERS */
+.section-hdr { display: flex; align-items: stretch; border-bottom: 1px solid rgba(255,255,255,.05); }
+.section-phase-block { width: 240px; flex-shrink: 0; padding: 15px 18px; border-right: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column; }
+.spb-label { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 5px; }
+.spb-name { font-size: 17px; font-weight: 800; margin-bottom: 4px; line-height: 1.1; }
+.spb-who { font-size: 10px; font-weight: 600; margin-bottom: 5px; }
+.spb-desc { font-size: 8.5px; color: var(--grey1); font-weight: 300; line-height: 1.55; }
+.section-datapoints { flex: 1; padding: 12px 18px; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; }
+.sdp-title { width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 7px; color: var(--grey1); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+.dp-chip { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; padding: 2px 8px; border-radius: 20px; border: 1px solid; white-space: nowrap; }
+
+/* chip colours */
+.c-red    { color: var(--red);    border-color: rgba(230,57,70,.4);   background: rgba(230,57,70,.07); }
+.c-orange { color: var(--orange); border-color: rgba(230,126,34,.4);  background: rgba(230,126,34,.07); }
+.c-steel  { color: var(--steel);  border-color: rgba(127,140,154,.4); background: rgba(127,140,154,.07); }
+.c-mint   { color: var(--mint);   border-color: rgba(2,195,154,.4);   background: rgba(2,195,154,.07); }
+.c-teal   { color: var(--teal);   border-color: rgba(2,128,144,.4);   background: rgba(2,128,144,.07); }
+.c-amber  { color: var(--amber);  border-color: rgba(244,162,97,.4);  background: rgba(244,162,97,.07); }
+.c-blue   { color: var(--blue);   border-color: rgba(55,138,221,.4);  background: rgba(55,138,221,.07); }
+.c-purple { color: var(--purple); border-color: rgba(155,89,182,.4);  background: rgba(155,89,182,.07); }
+.c-green  { color: var(--green);  border-color: rgba(72,187,120,.4);  background: rgba(72,187,120,.07); }
+.c-grey   { color: var(--grey1);  border-color: rgba(160,174,192,.25);background: rgba(160,174,192,.04); }
+
+/* AGENT GRID */
+.agent-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: rgba(255,255,255,.04); border-top: 1px solid rgba(255,255,255,.04); }
+.agent-card { background: var(--navy); padding: 12px 13px; position: relative; overflow: hidden; transition: background .2s; }
+.agent-card:hover { background: var(--navy4); }
+.agent-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.ac-mint::before   { background: var(--mint); }   .ac-teal::before   { background: var(--teal); }
+.ac-blue::before   { background: var(--blue); }   .ac-amber::before  { background: var(--amber); }
+.ac-green::before  { background: var(--green); }  .ac-red::before    { background: var(--red); }
+.ac-purple::before { background: var(--purple); } .ac-steel::before  { background: var(--steel); }
+.ac-orange::before { background: var(--orange); }
+
+.agent-id { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; font-weight: 500; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+.aid-badge { font-size: 7px; padding: 1px 5px; border-radius: 3px; font-weight: 500; border: 1px solid; }
+.ab-mint   { color: var(--mint);   border-color: rgba(2,195,154,.5);   background: rgba(2,195,154,.1); }
+.ab-teal   { color: var(--teal);   border-color: rgba(2,128,144,.5);   background: rgba(2,128,144,.1); }
+.ab-blue   { color: var(--blue);   border-color: rgba(55,138,221,.5);  background: rgba(55,138,221,.1); }
+.ab-amber  { color: var(--amber);  border-color: rgba(244,162,97,.5);  background: rgba(244,162,97,.1); }
+.ab-green  { color: var(--green);  border-color: rgba(72,187,120,.5);  background: rgba(72,187,120,.1); }
+.ab-red    { color: var(--red);    border-color: rgba(230,57,70,.5);   background: rgba(230,57,70,.1); }
+.ab-purple { color: var(--purple); border-color: rgba(155,89,182,.5);  background: rgba(155,89,182,.1); }
+.ab-steel  { color: var(--steel);  border-color: rgba(127,140,154,.5); background: rgba(127,140,154,.1); }
+.ab-orange { color: var(--orange); border-color: rgba(230,126,34,.5);  background: rgba(230,126,34,.1); }
+
+.agent-name { font-size: 10px; font-weight: 700; color: var(--white); line-height: 1.25; margin-bottom: 5px; }
+.agent-phase-tags { display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 5px; }
+.phase-tag { font-family: 'JetBrains Mono', monospace; font-size: 6px; padding: 1px 4px; border-radius: 2px; }
+.pt-red    { background: rgba(230,57,70,.15);   color: var(--red); }
+.pt-orange { background: rgba(230,126,34,.15);  color: var(--orange); }
+.pt-steel  { background: rgba(127,140,154,.15); color: var(--steel); }
+.pt-mint   { background: rgba(2,195,154,.15);   color: var(--mint); }
+
+.agent-action { font-size: 8px; color: var(--grey1); font-weight: 300; line-height: 1.55; margin-bottom: 6px; }
+.agent-outputs { display: flex; flex-direction: column; gap: 2px; border-top: 1px solid rgba(255,255,255,.05); padding-top: 5px; }
+.ao-line { font-family: 'JetBrains Mono', monospace; font-size: 6.5px; color: var(--grey2); display: flex; align-items: flex-start; gap: 4px; line-height: 1.4; }
+.ao-line::before { content: '▸'; flex-shrink: 0; }
+.ac-mint   .ao-line::before { color: var(--mint); }   .ac-teal   .ao-line::before { color: var(--teal); }
+.ac-blue   .ao-line::before { color: var(--blue); }   .ac-amber  .ao-line::before { color: var(--amber); }
+.ac-green  .ao-line::before { color: var(--green); }  .ac-red    .ao-line::before { color: var(--red); }
+.ac-purple .ao-line::before { color: var(--purple); } .ac-steel  .ao-line::before { color: var(--steel); }
+.ac-orange .ao-line::before { color: var(--orange); }
+
+/* CLUSTER DIVIDER */
+.cluster-divider { grid-column: 1 / -1; background: var(--navy3); padding: 7px 16px; display: flex; align-items: center; gap: 12px; border-top: 1px solid rgba(255,255,255,.05); }
+.cd-num  { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; font-weight: 500; }
+.cd-name { font-size: 11px; font-weight: 700; }
+.cd-desc { font-size: 8.5px; color: var(--grey1); font-weight: 300; }
+.cd-line { flex: 1; height: 1px; background: rgba(255,255,255,.05); }
+
+/* STATS */
+.stats-bar { display: flex; background: var(--navy3); border-top: 1px solid rgba(2,195,154,.15); }
+.stat-item { flex: 1; padding: 12px 16px; text-align: center; border-right: 1px solid rgba(255,255,255,.05); }
+.stat-item:last-child { border-right: none; }
+.sn { font-size: 20px; font-weight: 900; color: var(--mint); line-height: 1; letter-spacing: -.03em; }
+.sn.a { color: var(--amber); } .sn.t { color: var(--teal); } .sn.r { color: var(--red); } .sn.o { color: var(--orange); }
+.sl { font-size: 8.5px; color: var(--grey1); font-weight: 300; margin-top: 3px; line-height: 1.3; }
+
+/* FOOTER */
+.footer { display: flex; align-items: center; justify-content: space-between; padding: 12px 48px; background: var(--navy3); border-top: 1px solid rgba(255,255,255,.05); }
+.footer-brand { font-size: 11px; font-weight: 700; color: var(--grey2); } .footer-brand span { color: var(--mint); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 7.5px; color: var(--grey1); }
+.ldot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.footer-copy { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--grey2); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div>
+    <div class="wordmark">MAN<span class="ju">JU</span><span class="dot"></span></div>
+    <div class="hdr-sub">35-Agent Deep Dive &nbsp;·&nbsp; Steel Circular Value Chain &nbsp;·&nbsp; Circular Intelligence Platform</div>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-tag">ELV → Dismantler → Steel Recycler → Tier 3/2/1 → OEM</div>
+    <div class="hdr-title">How Every MANJU Agent Operates on the<br>Steel Circular Value Chain — DIA Rolled Bar to Gears, Pinions &amp; Wheel Hubs</div>
+    <div class="hdr-desc">All 35 MANJU agents mapped to their specific actions across the four phases of the steel circular value chain — Origin (ELV Dismantling), Processing (Heat → Continuous Casting → Post-Processing → DIA Rolled Steel Bars), Manufacture (Forging → Machining → Assembly at Tier 3/2/1), and Assembly (OEM New Vehicle Integration). Data points captured at each phase are shown with the precise workings of every agent at that node.</div>
+  </div>
+</div>
+
+<!-- PHASE NAV -->
+<div class="phase-nav">
+  <div class="phase-tab ph-red">
+    <div class="phase-bar"></div>
+    <div class="phase-num">01 / Origin</div>
+    <div class="phase-name">ELV Dismantling</div>
+    <div class="phase-detail">ELV received → depollution → disassembly → Shell Steel Bales Scrap &amp; Other Steel Scrap weighed, bundled, labelled &amp; dispatched to steel recycler</div>
+  </div>
+  <div class="phase-tab ph-orange">
+    <div class="phase-bar"></div>
+    <div class="phase-num">02 / Processing</div>
+    <div class="phase-name">Heat → DIA Rolled Bar</div>
+    <div class="phase-detail">All steel scrap inputs + PCR/PIR + virgin iron/steel → Electric Arc Furnace Heat → Continuous Casting → Post-Processing → DIA Rolled Steel Bars certified</div>
+  </div>
+  <div class="phase-tab ph-steel">
+    <div class="phase-bar"></div>
+    <div class="phase-num">03 / Manufacture</div>
+    <div class="phase-name">Forging → Assembly</div>
+    <div class="phase-detail">DIA Rolled Bars → Tier 3 Forging → Tier 2 Machining → Tier 1 Assembly → Gears, Pinions, Wheel Hubs with part-level DPP, Recycled% and PCF evidenced</div>
+  </div>
+  <div class="phase-tab ph-mint">
+    <div class="phase-bar"></div>
+    <div class="phase-num">04 / Assembly</div>
+    <div class="phase-name">OEM New Vehicle</div>
+    <div class="phase-detail">Steel parts fitted to new vehicle → vehicle BOM updated → vehicle DPP complete → ELV→New Vehicle steel circular loop closed and fully evidenced</div>
+  </div>
+</div>
+
+<!-- ═══ CLUSTER 1: ORCHESTRATION ═══ -->
+<div class="section-hdr" style="border-left: 3px solid var(--mint)">
+  <div class="section-phase-block">
+    <div class="spb-label" style="color:var(--mint)">Cluster 1 · 3 Agents</div>
+    <div class="spb-name" style="color:var(--mint)">Orchestration</div>
+    <div class="spb-who">System Brain · All 4 Phases</div>
+    <div class="spb-desc">The central nervous system of the steel circular flow. These three agents manage task routing, multi-agent workflow sequencing and immutable audit logging — ensuring every agent action across all four phases of the steel value chain is coordinated, correctly sequenced and permanently recorded with cryptographic integrity. The steel chain is more complex than plastics due to the multi-tier manufacturing steps and the high-temperature, high-precision nature of steelmaking.</div>
+  </div>
+  <div class="section-datapoints">
+    <div class="sdp-title">Key Data Points Orchestrated Across All Phases</div>
+    <span class="dp-chip c-red">ELV vehicle identity &amp; scrap bundle lot ID</span>
+    <span class="dp-chip c-red">Shell Steel Bales vs Other Steel Scrap codes</span>
+    <span class="dp-chip c-orange">Heat number (EAF melt campaign ID)</span>
+    <span class="dp-chip c-orange">Ladle chemistry analysis results</span>
+    <span class="dp-chip c-orange">Continuous caster strand ID &amp; billet IDs</span>
+    <span class="dp-chip c-orange">Rolling mill pass schedule &amp; bar lot ID</span>
+    <span class="dp-chip c-steel">Forging batch → bar lot link</span>
+    <span class="dp-chip c-steel">Machined part ID per gear/pinion/hub</span>
+    <span class="dp-chip c-steel">Assembly sub-system ID</span>
+    <span class="dp-chip c-mint">Vehicle BOM update triggers</span>
+    <span class="dp-chip c-mint">CSRD reporting cycle triggers</span>
+    <span class="dp-chip c-grey">All agent action timestamps &amp; SLA monitoring</span>
+  </div>
+</div>
+<div class="agent-grid">
+  <div class="cluster-divider"><div class="cd-num" style="color:var(--mint)">C1</div><div class="cd-name" style="color:var(--mint)">Orchestration Layer</div><div class="cd-line"></div><div class="cd-desc">3 agents · Active across all 4 phases continuously</div></div>
+
+  <div class="agent-card ac-mint" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-mint">A-01</span><span style="color:var(--mint)">Orchestration</span></div>
+    <div class="agent-name">Master Orchestrator Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">The central brain of the steel circular flow. At phase 01, detects the ELV arrival event at the dismantler gate and simultaneously spawns 16 downstream tasks — vehicle identity verification, steel passport retrieval, hazardous substance mapping, scrap grade classification and bundle lot creation for Shell Steel Bales and Other Steel Scrap. At phase 02, enforces the steelmaking sequencing lock: Heat composition must be approved before tapping, which must complete before continuous casting is authorised, which must complete before the rolling schedule is released. This is a critical safety and quality requirement in steelmaking — any agent attempting to trigger a downstream step without upstream completion is blocked. At phase 03, routes the DIA Rolled Bar lot passport to Tier 3 forging production orders and tracks the cascade through Tier 2 machining to Tier 1 assembly, assigning unique part IDs to each gear, pinion and wheel hub. At phase 04, triggers OEM BOM update and CSRD reporting cycle upon vehicle completion confirmation.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Spawns 16 parallel tasks on ELV arrival — scrap grading, passport retrieval, substance mapping</div>
+      <div class="ao-line">Heat composition approval gate before tapping — steelmaking safety lock enforced</div>
+      <div class="ao-line">Routes DIA bar passport to Tier 3 forging orders on delivery confirmation</div>
+      <div class="ao-line">Tracks cascade through Tier 3 → Tier 2 → Tier 1, assigning part IDs at each transition</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-mint" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-mint">A-02</span><span style="color:var(--mint)">Orchestration</span></div>
+    <div class="agent-name">Workflow Coordinator Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Manages the 28-step end-to-end workflow of the steel circular flow as a single coordinated process using saga-pattern compensation. The steel chain has more steps than plastics due to the Tier 3/2/1 manufacturing cascade. If ladle chemistry fails the Heat approval gate at step 9 of 28, this agent identifies the specific alloying correction required and which prior scrap intake steps need to be reviewed. Coordinates the critical human-in-the-loop gate where the steelmaking metallurgist must approve the Heat chemistry (C%, Mn%, Si%, P%, S% and alloy additions) before tapping — logging approver identity and timestamp. Tracks SLA against OEM delivery schedules: if a Tier 3 forging run is delayed, models the cascade impact on Tier 2 machining lead time and Tier 1 assembly capacity, issuing a proactive ETA revision to the OEM with specific remediation options.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">28-step workflow graph maintained with real-time completion status per steel process node</div>
+      <div class="ao-line">Metallurgist gate: Heat chemistry approved with identity, timestamp and correction log</div>
+      <div class="ao-line">Saga rollback: if Heat fails, identifies which scrap input lots require re-evaluation</div>
+      <div class="ao-line">Cascade delay modelling: Tier 3 delay → Tier 2 → Tier 1 → OEM ETA revision issued</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-mint">
+    <div class="agent-id"><span class="aid-badge ab-mint">A-03</span><span style="color:var(--mint)">Orchestration</span></div>
+    <div class="agent-name">Audit Trail Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Creates the immutable cryptographically-signed record allowing a regulator to trace any gear on a new vehicle back to the specific ELV it came from. Every agent action — from scrap bundle weighing at the dismantler through to the OEM vehicle DPP update — is hashed, timestamped and written to write-once S3 Object Lock storage. The steel audit trail is particularly critical because Heat numbers are the primary traceability link in steelmaking — the audit package connects ELV scrap bundle lot IDs → Heat number → strand/billet IDs → bar lot ID → forging batch → machined part serial → vehicle VIN.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Cryptographic hash per agent action — tamper detection permanent, write-once storage</div>
+      <div class="ao-line">Steel traceability chain: ELV scrap lot → Heat number → billet → bar → part → VIN</div>
+      <div class="ao-line">Regulator audit package: complete chain in single downloadable, verifiable document</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CLUSTER 2: DATA INGESTION ═══ -->
+<div class="section-hdr" style="border-left: 3px solid var(--teal)">
+  <div class="section-phase-block">
+    <div class="spb-label" style="color:var(--teal)">Cluster 2 · 6 Agents</div>
+    <div class="spb-name" style="color:var(--teal)">Data Ingestion</div>
+    <div class="spb-who">Data Foundation · All 4 Phases</div>
+    <div class="spb-desc">Six agents that transform every raw data source in the steel flow into validated, structured material records. Steel data is particularly heterogeneous — ranging from dismantler handwritten scrap bundle sheets and mill chemistry lab reports to EAF furnace PLC data streams, spectrometry analysis results, rolling mill pass schedules and OEM CAD-driven BOM feeds. All six agents operate simultaneously at each processing stage.</div>
+  </div>
+  <div class="section-datapoints">
+    <div class="sdp-title">Raw Data Sources Ingested Across All 4 Phases</div>
+    <span class="dp-chip c-red">ELV gate scan &amp; VIN lookup</span>
+    <span class="dp-chip c-red">Dismantler weighbridge MQTT feeds</span>
+    <span class="dp-chip c-red">Scrap bundle sort sheets (PDFs/handwritten)</span>
+    <span class="dp-chip c-orange">EAF furnace PLC: power input, tap weight, tap temperature</span>
+    <span class="dp-chip c-orange">Ladle spectrometry analysis (C, Mn, Si, P, S, Cr, Ni, Cu %)</span>
+    <span class="dp-chip c-orange">Continuous caster machine data: casting speed, temperature</span>
+    <span class="dp-chip c-orange">Rolling mill pass schedule &amp; finishing parameters</span>
+    <span class="dp-chip c-orange">Virgin pig iron / DRI / HBI supplier mill certs</span>
+    <span class="dp-chip c-steel">Forge press cycle data: force, temperature, stroke</span>
+    <span class="dp-chip c-steel">CNC machining program outputs per part serial</span>
+    <span class="dp-chip c-steel">CMM dimensional inspection reports</span>
+    <span class="dp-chip c-mint">OEM CAD/BOM XML feeds for steel parts</span>
+  </div>
+</div>
+<div class="agent-grid">
+  <div class="cluster-divider"><div class="cd-num" style="color:var(--teal)">C2</div><div class="cd-name" style="color:var(--teal)">Data Ingestion &amp; Processing</div><div class="cd-line"></div><div class="cd-desc">6 agents · All raw steel chain inputs validated before entering the knowledge graph</div></div>
+
+  <div class="agent-card ac-teal" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-teal">A-04</span><span style="color:var(--teal)">Data Ingestion</span></div>
+    <div class="agent-name">Document Extraction Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span></div>
+    <div class="agent-action">Transforms every unstructured document in the steel flow into structured material data. At phase 01, reads dismantler handwritten scrap bundle sheets and weighbridge tickets — extracting bundle weight, scrap grade classification (Shell Steel Bales vs Other Steel Scrap), lot ID, collection date and source ELV VINs using multimodal AI including OCR on dirty, oil-stained scrapyard documents. At phase 02, processes steel recycler purchase order PDFs for PCR, PIR and virgin iron inputs (pig iron, DRI, HBI, ferro-alloys) — extracting supplier certificate of analysis (CoA), chemistry guarantees (carbon equivalent, sulphur, phosphorus maxima), and declared carbon intensity per tonne. Reads EAF Heat records and mill test certificates. At phase 03, extracts forge shop job cards, machining programs and CMM inspection reports. Handles documents in English, German, Japanese and Korean to cover global steel and automotive supply chains.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Scrap sheet OCR: bundle weight, grade, lot ID from handwritten/dirty scrapyard documents</div>
+      <div class="ao-line">CoA parsing: chemistry guarantees, carbon equivalent, supplier lot number extracted</div>
+      <div class="ao-line">Multilingual: EN/DE/JA/KR — global steel recyclers and Asian automotive Tier 1s</div>
+      <div class="ao-line">Confidence scoring per field — low-confidence chemistry values queued for lab verification</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-teal" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-teal">A-05</span><span style="color:var(--teal)">Data Ingestion</span></div>
+    <div class="agent-name">ERP Integration Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Maintains live bidirectional connections to every ERP system across the steel value chain. At phase 02, syncs the recycler's SAP purchase orders for scrap, PCR/PIR, pig iron, DRI and ferro-alloys — pulling goods receipt confirmations and lot numbers to cross-reference against weighbridge records. Connects to the steel mill's production planning system to extract Heat scheduling, rolling mill orders and finished bar lot numbers. At phase 03, connects to Tier 3 forge shop ERP (typically SAP PM or Infor) to extract production orders and material consumption per forging batch, then cascades to Tier 2 machining ERP for CNC program execution records and Tier 1 assembly ERP for sub-assembly build records. At phase 04, pushes validated recycled content and PCF data directly into the OEM's PLM system, triggering automatic steel BOM enrichment without manual entry.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">SAP goods receipt: all scrap and virgin input lots confirmed vs. ordered quantities</div>
+      <div class="ao-line">Heat/rolling schedule sync: Heat number, billet IDs, bar lot IDs extracted in real time</div>
+      <div class="ao-line">Tier 3/2/1 ERP cascade: material consumption per forging → machining → assembly order</div>
+      <div class="ao-line">OEM PLM writeback: steel recycled% and PCF pushed to BOM without manual entry</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-teal">
+    <div class="agent-id"><span class="aid-badge ab-teal">A-06</span><span style="color:var(--teal)">Data Ingestion</span></div>
+    <div class="agent-name">IoT Data Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span></div>
+    <div class="agent-action">Ingests real-time sensor streams from steelmaking and fabrication equipment. At the dismantler, reads weighbridge MQTT feeds per bundle. At the steel recycler, ingests EAF power meter data (kWh per Heat), tap temperature sensors, ladle weight cells, continuous caster strand speed and meniscus level sensors, rolling mill load cells and pyrometer readings per pass. These data streams are used to calculate per-Heat energy consumption, which is the dominant variable in the steel recycling carbon footprint calculation. At Tier 3, reads forge press cycle data: ram force (tonnes), die temperature, forging temperature and cycle time per part. At Tier 2, reads CNC machining spindle load, cycle time per part and coolant consumption. Runs edge processing at each facility, pre-aggregating high-frequency furnace data before cloud transmission.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">EAF power meter: kWh per Heat captured — primary carbon footprint input for steelmaking</div>
+      <div class="ao-line">Caster sensors: strand speed, meniscus level → billet quality prediction inputs</div>
+      <div class="ao-line">Forge press: force, temperature, cycle time per part → linked to forging lot record</div>
+      <div class="ao-line">CNC machining: cycle time and spindle energy per part → part DPP energy field</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-teal" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-teal">A-07</span><span style="color:var(--teal)">Data Ingestion</span></div>
+    <div class="agent-name">Data Quality Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Three-layer validation gatekeeper for all steel flow data. Completeness check: every scrap bundle lot must have weight, grade classification, source facility ID, and collection date before a custody record is created. Consistency check: the mass balance across a Heat must close — the sum of all scrap and virgin iron inputs declared must equal the tap weight plus slag and fume losses within a defined tolerance (typically ±2% for EAF steelmaking). Any balance gap triggers immediate investigation before the Heat number is confirmed. Plausibility check: validates that the declared recycled content percentage is achievable given the actual input materials — if Shell Steel Bales Scrap and Other Steel Scrap account for 75% of inputs by weight, a claim of 90% recycled content is flagged as implausible unless additional verified PCR sources are present. Learns quality patterns per scrap supplier.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Completeness gate: scrap bundle requires 5 mandatory fields before custody record created</div>
+      <div class="ao-line">Heat mass balance: sum of all inputs vs tap weight ± slag loss within ±2% tolerance</div>
+      <div class="ao-line">Plausibility: recycled% claim validated against actual scrap input quantities declared</div>
+      <div class="ao-line">Supplier pattern: chemistry variance trends flagged — systematic under-reporting of P or S content</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-teal" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-teal">A-08</span><span style="color:var(--teal)">Data Ingestion</span></div>
+    <div class="agent-name">Data Reconciliation Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Resolves conflicts when the same steel lot or chemistry value is declared differently by different parties. Most critical at phase 02: a scrap supplier declares a PCR steel lot as having less than 0.05% copper (Cu), but the spectrometry analysis on the tapped Heat shows 0.08% Cu — which triggers a potential quality non-conformance for automotive steel grades where Cu above 0.08% can cause surface defects. The reconciliation agent applies the measured spectrometry value over the declared value (measurement overrides declaration), logs the conflict, notifies the scrap supplier and triggers the Anomaly Detection Agent to investigate whether that supplier's Cu levels are systematically under-declared. At the Tier 3 to Tier 2 interface, reconciles dimensional differences between the forge shop's declared part profile and the Tier 2 CMM incoming inspection measurement.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Cu conflict: spectrometer 0.08% overrides declared 0.05% — quality non-conformance triggered</div>
+      <div class="ao-line">Measurement over declaration: hierarchy rule enforced for all chemistry conflicts</div>
+      <div class="ao-line">Dimensional reconciliation: forge profile vs CMM measurement at Tier 2 intake</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-teal">
+    <div class="agent-id"><span class="aid-badge ab-teal">A-09</span><span style="color:var(--teal)">Data Ingestion</span></div>
+    <div class="agent-name">Third-Party Data Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Continuously enriches the steel flow with external authoritative data. Monitors ECHA for restricted substances in steel additives — specifically monitoring cobalt, nickel and chromium compounds used as ferro-alloy additions, and lead content in free-machining steel grades. Pulls LME commodity prices for scrap steel, pig iron and DRI to calculate the real-time economic value of recycled versus virgin iron content. Validates steel scrap PCR and PIR supplier certifications against issuers' live registries. Monitors World Steel Association emission intensity benchmarks to provide context for the recycler's carbon footprint calculations. Checks country-specific import/export restrictions on steel scrap that may affect the supply chain.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">ECHA monitoring: cobalt, nickel, chromium alloy additions flagged against SVHC list</div>
+      <div class="ao-line">LME scrap steel price: economic value of recycled fraction updated in real time per Heat</div>
+      <div class="ao-line">World Steel Association benchmarks: emission intensity context for PCF calculations</div>
+      <div class="ao-line">Steel scrap trade restriction monitoring: supply disruption from export ban scenarios</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CLUSTER 3: MATERIAL TRACEABILITY ═══ -->
+<div class="section-hdr" style="border-left: 3px solid var(--blue)">
+  <div class="section-phase-block">
+    <div class="spb-label" style="color:var(--blue)">Cluster 3 · 6 Agents</div>
+    <div class="spb-name" style="color:var(--blue)">Material Traceability</div>
+    <div class="spb-who">Digital Thread · All 4 Phases</div>
+    <div class="spb-desc">These six agents build the unbroken digital thread from the specific ELV dismantled, through every tonne of steel processed in the EAF, through the billets and bars, through forging and machining, to the exact gear or wheel hub on a new vehicle. In steelmaking, the Heat number is the primary traceability unit — MANJU uses it as the central link connecting the scrap input records to the finished product records.</div>
+  </div>
+  <div class="section-datapoints">
+    <div class="sdp-title">Traceability Data Points Captured &amp; Linked</div>
+    <span class="dp-chip c-red">ELV VIN → scrap bundle lot link</span>
+    <span class="dp-chip c-red">Shell Steel Bales vs Other Steel stream codes</span>
+    <span class="dp-chip c-orange">Scrap lot → Heat number linkage</span>
+    <span class="dp-chip c-orange">Heat number → billet serial IDs</span>
+    <span class="dp-chip c-orange">Billet serial → bar lot ID</span>
+    <span class="dp-chip c-orange">Recycled% per Heat (by input mass)</span>
+    <span class="dp-chip c-orange">Chemistry (C, Mn, Si, P, S, Cr, Ni, Cu %)</span>
+    <span class="dp-chip c-steel">Bar lot → forging batch link (Tier 3)</span>
+    <span class="dp-chip c-steel">Forging batch → machined part serial (Tier 2)</span>
+    <span class="dp-chip c-steel">Part serial → assembly sub-system (Tier 1)</span>
+    <span class="dp-chip c-mint">Part serial → vehicle VIN</span>
+    <span class="dp-chip c-mint">Vehicle-level recycled steel %</span>
+  </div>
+</div>
+<div class="agent-grid">
+  <div class="cluster-divider"><div class="cd-num" style="color:var(--blue)">C3</div><div class="cd-name" style="color:var(--blue)">Material Traceability</div><div class="cd-line"></div><div class="cd-desc">6 agents · Unbroken digital thread from ELV scrap to finished vehicle steel parts</div></div>
+
+  <div class="agent-card ac-blue" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-blue">A-10</span><span style="color:var(--blue)">Traceability</span></div>
+    <div class="agent-name">Material Passport Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Creates and evolves the Digital Product Passport at every node of the steel flow. Phase 01: creates the scrap bundle passport — ELV VINs, scrap grade (Shell Steel Bales / Other Steel Scrap), bundle weight, lot ID, dismantler facility. Phase 02: creates the Heat passport — inherits all scrap bundle passports as parent records (this Heat contains steel from 23 different scrap bundles and 4 virgin iron lots), records the full input mix (recycled% by mass, chemistry aim and achieved, EAF energy consumed, tap weight, Heat number, caster strand IDs). Creates billet passports inheriting from the Heat, and bar lot passports inheriting from billets. Phase 03: creates the forged part passport at Tier 3 — inherits bar lot passport, adds forging heat treatment cycle, dimensional compliance data, part serial. Creates machined part passport at Tier 2 — inherits forged passport, adds final dimensional data and surface finish. Creates assembly passport at Tier 1 — inherits machined part, adds sub-assembly ID and torque verification records. Phase 04: merges all part passports into the vehicle-level DPP.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Phase 01: Scrap bundle DPP — ELV VINs, grade, weight, lot ID created</div>
+      <div class="ao-line">Phase 02: Heat DPP — inherits all 23 scrap bundles + 4 virgin lots, chemistry, energy, tap weight</div>
+      <div class="ao-line">Phase 02: Bar lot DPP — Heat → billet → bar passport cascade with recycled% inheritance</div>
+      <div class="ao-line">Phase 03: Part DPP — forging → machining → assembly passports per gear/pinion/hub</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-blue" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-blue">A-11</span><span style="color:var(--blue)">Traceability</span></div>
+    <div class="agent-name">Chain of Custody Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Tracks physical and legal custody of steel at every transfer point. When the dismantler dispatches scrap bundles to the recycler, creates a custody transfer event with carrier ID, transport manifest, and delivery weighbridge confirmation. Critically validates mass balance at every custody transfer — if 48.5 tonnes of steel scrap left the dismantler but only 47.2 tonnes arrived at the recycler gate, flags the 1.3-tonne discrepancy before any processing begins. At the recycler-to-Tier 3 transfer, validates that bar lot weight and length match the order specification and the mill certificate. Validates that all facilities hold current certifications: dismantler ATF, recycler ISO 14001 and IATF 16949 (automotive quality), Tier 3 forge shop IATF 16949, Tier 2 machining IATF 16949, Tier 1 assembly IATF 16949 — all must be current at the time of each processing event.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Custody transfer: dispatch → transport → receipt confirmed with manifest at each handoff</div>
+      <div class="ao-line">Mass balance gate: 48.5 t dispatched vs 47.2 t received → hold for investigation</div>
+      <div class="ao-line">Bar lot verification: weight, length and chemistry match mill cert at Tier 3 intake</div>
+      <div class="ao-line">IATF 16949 check: certification valid at time of each automotive manufacturing event</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-blue">
+    <div class="agent-id"><span class="aid-badge ab-blue">A-12</span><span style="color:var(--blue)">Traceability</span></div>
+    <div class="agent-name">Provenance Verification Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span></div>
+    <div class="agent-action">Actively validates claimed origins of steel inputs. At phase 01, cross-references ELV VINs against national vehicle registration databases — confirming each vehicle existed, was registered as an ELV and was legally processed by a licensed ATF. At phase 02, detects scrap provenance washing: if a recycler claims 80% recycled steel but has only purchased enough verified scrap (with confirmed origin chains) to support 62%, flags as potential greenwashing. Verifies PCR and PIR steel supplier certifications directly via API calls to issuers. In steelmaking, also validates that scrap bundles do not contain radioactive contaminated steel — checks supplier origin against regional radiation contamination risk registries for high-risk sourcing areas.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">ELV VIN cross-referenced against national registration + ATF licence database</div>
+      <div class="ao-line">Scrap wash detection: claimed 80% recycled vs 62% verifiable feedstock purchased</div>
+      <div class="ao-line">Radiation risk check: scrap origin vs regional contamination registries</div>
+      <div class="ao-line">Confidence score: API-verified = 0.95 vs self-declared CoA = 0.50 → additional lab verification</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-blue" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-blue">A-13</span><span style="color:var(--blue)">Traceability</span></div>
+    <div class="agent-name">Batch Tracking Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Manages the complex genealogy of steel as it is accumulated, melted, cast and rolled into products. At the EAF stage, this is the most complex computation in the steel flow: a single Heat (typically 100–180 tonnes) is assembled from multiple scrap bundles, PCR/PIR lots and virgin iron materials. Heat STEEL-2024-088 contains: 34% Shell Steel Bales (ELV-origin, 5 VINs), 28% Other Steel Scrap (ELV-origin, 8 VINs), 16% PCR steel (certified), 10% PIR steel (machining offcuts), 7% Pig Iron (virgin), 5% DRI (virgin). The batch tracking agent maintains this 6-source fractional genealogy tree and propagates it through every downstream transformation: Heat → 6 billets (each with proportional genealogy) → bar lots (same genealogy as parent billets) → forging batches → individual part serials. At the Tier 3/2/1 level, tracks material splits — one 6-metre DIA bar is cut into 8 gear blanks, each inheriting the proportional genealogy of the bar.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Heat genealogy: STEEL-2024-088 = 34% ELV-Shells + 28% ELV-Other + 16% PCR + 10% PIR + 12% Virgin</div>
+      <div class="ao-line">Genealogy propagated: Heat → 6 billets → 18 bar lots → 144 gear blanks per bar cut plan</div>
+      <div class="ao-line">Bar cut tracking: 6m bar split into 8 blanks each inheriting proportional Heat genealogy</div>
+      <div class="ao-line">Reverse trace: gear serial → Heat number → ELV VINs in under 5 seconds</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-blue" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-blue">A-14</span><span style="color:var(--blue)">Traceability</span></div>
+    <div class="agent-name">Hazardous Substance Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Tracks hazardous substances and restricted elements through the steel flow. At phase 01, reads ELV material passports to identify whether source vehicles contained radioactive contaminated steel components, lead-containing coatings or hexavalent chromium surface treatments that may have entered the scrap stream. At phase 02, monitors for tramp elements in the steel melt — copper (Cu), tin (Sn), lead (Pb) and antimony (Sb) cannot be removed during EAF steelmaking and accumulate with each recycling cycle. Calculates the tramp element levels in the Heat chemistry (from the spectrometry analysis) and flags if Cu exceeds the automotive steel limit of 0.08% or if the combined Cu+Sn+Pb+Sb tramp element sum exceeds the automotive quality threshold for the intended gear or hub application. At phase 03, ensures the forge shop has received the full chemical composition certificate for each bar lot before heat treatment begins. At phase 04, provides the OEM with the IMDS substance declaration for steel parts.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Tramp element alert: Cu at 0.085% in Heat STEEL-2024-088 exceeds 0.08% automotive limit</div>
+      <div class="ao-line">ELV coating flag: hexavalent chromium surfaces identified in scrap bundle lot — declared</div>
+      <div class="ao-line">Forge shop gate: chemistry cert must be received before heat treatment begins</div>
+      <div class="ao-line">IMDS declaration generated per part serial with full chemistry provenance for OEM</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-blue">
+    <div class="agent-id"><span class="aid-badge ab-blue">A-15</span><span style="color:var(--blue)">Traceability</span></div>
+    <div class="agent-name">Recycled Content Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Calculates and certifies the recycled content of steel Heats and downstream parts using ISO 14021-compliant mass balance methodology. For Heat STEEL-2024-088: (34%+28%+16%+10%) = 88% total recycled, 12% virgin. Issues the official recycled content certificate for this Heat. Enforces anti-double-counting — the 34% Shell Steel Bales allocated to this Heat cannot be simultaneously claimed by any other Heat or customer. Distinguishes post-consumer (ELV-origin scrap + PCR) from pre-consumer (PIR from machining offcuts) recycled content — treated differently under different regulatory regimes. At phase 04, calculates the vehicle-level recycled steel contribution: if a vehicle contains 180 kg of parts manufactured from Heat STEEL-2024-088 and total vehicle steel mass is 850 kg, those parts contribute 18.6 percentage points to the vehicle's recycled steel content.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Heat recycled cert: 88% total (62% post-consumer ELV+PCR + 10% pre-consumer PIR)</div>
+      <div class="ao-line">Anti-double-count lock: Shell Steel Bales allocated exclusively to Heat STEEL-2024-088</div>
+      <div class="ao-line">Post-consumer vs pre-consumer split declared per regulatory requirement</div>
+      <div class="ao-line">Vehicle contribution: 180 kg at 88% recycled = 18.6 pp of vehicle recycled steel %</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CLUSTER 4: COMPLIANCE ═══ -->
+<div class="section-hdr" style="border-left: 3px solid var(--amber)">
+  <div class="section-phase-block">
+    <div class="spb-label" style="color:var(--amber)">Cluster 4 · 7 Agents</div>
+    <div class="spb-name" style="color:var(--amber)">Compliance &amp; Regulatory</div>
+    <div class="spb-who">Automated Filing · All 4 Phases</div>
+    <div class="spb-desc">Seven agents each owning one regulatory domain for the steel chain. The primary frameworks are the ELV Directive (recycled content targets, ATF authorisation, CoD), REACH/SCIP (tramp element and restricted substance declarations), CSRD ESRS E5 (circular economy disclosures, recycled steel %), the EU CBAM (Carbon Border Adjustment Mechanism — critical for imported steel inputs) and ISO 14067 Carbon PCF for steelmaking energy intensity.</div>
+  </div>
+  <div class="section-datapoints">
+    <div class="sdp-title">Regulatory Thresholds &amp; Data Points Monitored</div>
+    <span class="dp-chip c-red">ELV Directive: 85% reuse/recycle target</span>
+    <span class="dp-chip c-red">ATF certification status</span>
+    <span class="dp-chip c-orange">REACH: Pb, Cd, Cr(VI) in steel coatings</span>
+    <span class="dp-chip c-orange">CBAM: embedded carbon in imported steel</span>
+    <span class="dp-chip c-orange">ISO 14067: EAF vs BOF PCF methodology</span>
+    <span class="dp-chip c-steel">IATF 16949 quality system certification</span>
+    <span class="dp-chip c-steel">Automotive steel chemistry limits (IMDS)</span>
+    <span class="dp-chip c-mint">CSRD ESRS E5 recycled steel disclosures</span>
+    <span class="dp-chip c-mint">GHG Protocol Scope 3 Category 1</span>
+    <span class="dp-chip c-grey">EUR-Lex monitoring for steel sector</span>
+    <span class="dp-chip c-grey">World Steel emission intensity benchmarks</span>
+  </div>
+</div>
+<div class="agent-grid">
+  <div class="cluster-divider"><div class="cd-num" style="color:var(--amber)">C4</div><div class="cd-name" style="color:var(--amber)">Compliance &amp; Regulatory</div><div class="cd-line"></div><div class="cd-desc">7 agents · Each owns one regulatory domain end-to-end across the steel flow</div></div>
+
+  <div class="agent-card ac-amber">
+    <div class="agent-id"><span class="aid-badge ab-amber">A-16</span><span style="color:var(--amber)">Compliance</span></div>
+    <div class="agent-name">Regulatory Monitoring Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Monitors EUR-Lex and national feeds for regulatory changes affecting the steel circular chain. When the revised ELV Directive published new minimum recycled steel content targets for new vehicles, immediately calculated the impact on the OEM's current steel sourcing — issuing a gap analysis showing that at current recycled content rates from Heat STEEL-2024-088, the gear and hub components need to reach 85% recycled steel to contribute to the vehicle-level target, with specific Heat composition adjustments to achieve this. Also monitors the EU CBAM regulation — when CBAM phase-in requirements change the cost of imported pig iron or DRI from non-EU countries, calculates the impact on the recycler's virgin iron input economics and recommends sourcing strategy adjustments.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">ELV Directive: new recycled steel % target → gap analysis per Heat composition issued</div>
+      <div class="ao-line">CBAM monitoring: imported pig iron/DRI carbon cost changes modelled for sourcing impact</div>
+      <div class="ao-line">Steel ESPR: upcoming eco-design requirements for steel parts flagged 18 months ahead</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-amber">
+    <div class="agent-id"><span class="aid-badge ab-amber">A-17</span><span style="color:var(--amber)">Compliance</span></div>
+    <div class="agent-name">EU Battery Regulation Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">In the steel context, monitors whether EV battery structural steel components and battery housing steels are being co-processed with automotive body and drivetrain scrap at the dismantler — battery housing steel may contain specific coatings and alloy additions that are incompatible with drivetrain gear steel specifications. Also assists the OEM in generating the vehicle-level compliance picture where both battery passport requirements (for battery steel components) and ELV Directive steel recycled content requirements must be met simultaneously and separately declared in the vehicle DPP without double-counting steel between the two frameworks.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Co-processing check: EV battery housing steel incompatibility with drivetrain scrap stream</div>
+      <div class="ao-line">Coating contamination: battery steel coatings impact on drivetrain chemistry spec</div>
+      <div class="ao-line">OEM vehicle DPP: battery steel passport vs ELV steel content cleanly partitioned</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-amber" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-amber">A-18</span><span style="color:var(--amber)">Compliance</span></div>
+    <div class="agent-name">ELV Directive Compliance Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Owns complete ELV Directive compliance for the steel circular flow. At phase 01, verifies the dismantler holds a current ATF authorisation before processing begins — without a valid ATF, no Certificate of Destruction can be issued and the entire downstream scrap chain loses its legal ELV-origin status, eliminating the recycled content claim for the Heat. Calculates the recyclability contribution of steel body shell and mechanical components to the ELV's 85% reuse/recycling target — steel is typically the largest single material by mass in a passenger vehicle (850–950 kg) and therefore the dominant contributor to the ELV recyclability rate. At phase 04, generates the OEM's ELV Directive compliance report confirming recycled steel content sourcing meets revised Directive requirements per vehicle model.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">ATF check: invalid authorisation blocks entire downstream steel chain — ELV origin lost</div>
+      <div class="ao-line">CoD auto-generated with steel scrap weight contribution per ELV processed</div>
+      <div class="ao-line">Recyclability calc: steel mass contribution to ELV 85% reuse/recycling target</div>
+      <div class="ao-line">OEM compliance report: recycled steel% per vehicle model vs revised Directive requirements</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-amber" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-amber">A-19</span><span style="color:var(--amber)">Compliance</span></div>
+    <div class="agent-name">CSRD Reporting Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Auto-generates the OEM's CSRD disclosure under ESRS E5 (Resource Use and Circular Economy) for the steel value chain. Populates ESRS E5-5 fields: tonnes of secondary raw steel used (verified scrap kg × vehicles produced), percentage of recycled steel in production across all vehicle models, and the avoided CO₂ impact of using recycled (EAF) versus virgin (BOF) steel. This is a commercially significant calculation: EAF steelmaking from scrap emits approximately 0.4–0.7 kg CO₂e per kg of steel versus 1.8–2.2 kg CO₂e per kg for BOF from virgin iron ore — using 88% recycled steel instead of virgin steel avoids approximately 1.2–1.5 kg CO₂e per kg of steel, which across a 900 kg steel vehicle translates to 1.1–1.3 tonnes of CO₂e avoided per vehicle. All CSRD figures backed by verifiable Heat-level audit trails.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">ESRS E5-5: tonnes recycled steel calculated from all Heat recycled% × vehicles produced</div>
+      <div class="ao-line">CO₂ avoided: EAF 0.55 kg CO₂e/kg vs BOF 2.0 kg CO₂e/kg × recycled steel kg — quantified</div>
+      <div class="ao-line">Per vehicle: 88% recycled steel in 900 kg vehicle = ~1.2 tonnes CO₂e avoided vs virgin</div>
+      <div class="ao-line">Assurance-ready: every ESRS data point linked to Heat number and certified audit trail</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-amber">
+    <div class="agent-id"><span class="aid-badge ab-amber">A-20</span><span style="color:var(--amber)">Compliance</span></div>
+    <div class="agent-name">REACH &amp; SCIP Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Manages REACH compliance and SCIP database notifications for steel articles. In automotive steel, the most critical substances are: hexavalent chromium Cr(VI) in anti-corrosion coatings on steel scrap from older vehicles, lead (Pb) in solder and leaded steel grades which enters the scrap stream, and cadmium (Cd) in surface treatments. When the Hazardous Substance Agent flags that a steel Heat contains Cr(VI) above the 0.1% w/w threshold in coated articles, this agent generates the SCIP notification for all downstream articles — bar lots, forged parts and assembled components. At phase 04, ensures the OEM receives the B2B substance communication for every steel part containing SVHCs, fulfilling REACH Article 33 within 45 days of request.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Cr(VI) SCIP notification: coating-origin SVHC above 0.1% threshold filed to ECHA</div>
+      <div class="ao-line">Pb and Cd monitoring in scrap-sourced steel — concentration through Heat dilution calculated</div>
+      <div class="ao-line">REACH Art.33: B2B substance comm to Tier 3/2/1 and OEM within 45 days of request</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-amber" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-amber">A-21</span><span style="color:var(--amber)">Compliance</span></div>
+    <div class="agent-name">Carbon Footprint Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Calculates the Product Carbon Footprint (PCF) per tonne of DIA Rolled Bar and per part (gear, pinion, wheel hub) using ISO 14067 methodology. At phase 01: scrap collection transport, dismantling energy. At phase 02: the dominant carbon calculation — EAF energy (kWh per Heat × grid emission factor), electrode consumption, oxygen injection, slag former additions, continuous casting energy, rolling mill energy. For Heat STEEL-2024-088 with 88% recycled scrap, the calculated PCF is approximately 0.52 kg CO₂e/kg steel — versus approximately 2.05 kg CO₂e/kg for a BOF Heat from virgin iron ore — a 75% carbon reduction. At phase 03, adds forging energy (typically 1.5–2.5 kWh/kg for hot forging), machining energy, heat treatment energy (for case-hardened gears), and grinding energy. Each part type has a different energy intensity: a case-hardened gear requires approximately 4× the energy of an unhardened hub per kg. At phase 04, reports OEM's Scope 3 Category 1 emissions per vehicle model per steel part type.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Heat PCF: EAF energy × grid factor + electrode + slag → ~0.52 kg CO₂e/kg at 88% recycled</div>
+      <div class="ao-line">EAF vs BOF comparison: 0.52 kg CO₂e/kg vs 2.05 kg CO₂e/kg = 75% carbon reduction</div>
+      <div class="ao-line">Part PCF: bar PCF × part weight + forging (1.5–2.5 kWh/kg) + machining + heat treatment</div>
+      <div class="ao-line">OEM Scope 3 Cat.1: gear/pinion/hub CO₂e per vehicle model reported for GHG inventory</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-amber">
+    <div class="agent-id"><span class="aid-badge ab-amber">A-22</span><span style="color:var(--amber)">Compliance</span></div>
+    <div class="agent-name">Conflict Minerals Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-orange">02-Processing</span></div>
+    <div class="agent-action">In the steel context, monitors for tin (Sn) and tantalum (Ta) originating from conflict-affected regions that may enter the steel scrap stream via electronic and electrical equipment components mixed into ELV scrap. Also monitors for cobalt in ferro-alloy additions to high-grade alloy steel, and nickel sourcing from geopolitically sensitive supply chains. Validates that PCR/PIR scrap suppliers sourcing from high-risk geographies (Congo basin, certain CIS regions) have conducted sufficient OECD Due Diligence Guidance assessments. Issues the Conflict Minerals Reporting Template (CMRT) data for inclusion in OEM supplier declarations.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Sn/Ta monitoring in ELV scrap from electronic components mixed into steel stream</div>
+      <div class="ao-line">Cobalt in ferro-alloy additions: geopolitically sensitive sourcing flagged</div>
+      <div class="ao-line">OECD Due Diligence: high-risk scrap sourcing geographies validated and CMRT data issued</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CLUSTER 5: SUPPLY CHAIN INTELLIGENCE ═══ -->
+<div class="section-hdr" style="border-left: 3px solid var(--green)">
+  <div class="section-phase-block">
+    <div class="spb-label" style="color:var(--green)">Cluster 5 · 5 Agents</div>
+    <div class="spb-name" style="color:var(--green)">Supply Chain Intel</div>
+    <div class="spb-who">Risk &amp; Network · All 4 Phases</div>
+    <div class="spb-desc">Five agents that map, monitor and forecast the multi-tier steel supply network — from ELV dismantlers and steel recyclers through Tier 3/2/1 manufacturers. Steel supply chains are particularly concentrated (fewer, larger EAF recyclers) and geopolitically sensitive (scrap export restrictions, CBAM impacts on virgin iron sourcing). These agents provide the strategic intelligence to navigate these risks.</div>
+  </div>
+  <div class="section-datapoints">
+    <div class="sdp-title">Supply Intelligence Data Points</div>
+    <span class="dp-chip c-red">Dismantler ATF licence expiry dates</span>
+    <span class="dp-chip c-orange">Steel recycler EAF capacity utilisation</span>
+    <span class="dp-chip c-orange">Scrap availability forecast by region</span>
+    <span class="dp-chip c-orange">Pig iron / DRI sourcing cost and availability</span>
+    <span class="dp-chip c-steel">Tier 3 forge shop capacity vs OEM demand</span>
+    <span class="dp-chip c-steel">Tier 2 machining lead time</span>
+    <span class="dp-chip c-mint">OEM production plan (forward 24 months)</span>
+    <span class="dp-chip c-mint">Vehicle fleet EoL timing by steel grade</span>
+    <span class="dp-chip c-grey">LME scrap steel price differential</span>
+    <span class="dp-chip c-grey">CBAM certificate cost trajectory</span>
+  </div>
+</div>
+<div class="agent-grid">
+  <div class="cluster-divider"><div class="cd-num" style="color:var(--green)">C5</div><div class="cd-name" style="color:var(--green)">Supply Chain Intelligence</div><div class="cd-line"></div><div class="cd-desc">5 agents · Map, monitor and forecast the multi-tier steel circular supply network</div></div>
+
+  <div class="agent-card ac-green" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-green">A-23</span><span style="color:var(--green)">Supply Intel</span></div>
+    <div class="agent-name">Supplier Risk Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span></div>
+    <div class="agent-action">Continuously assesses risk profiles of all steel chain participants. For dismantlers: monitors ATF licence renewal (90-day advance warning), environment agency enforcement notices and news feeds for fires or disruptions. For the steel recycler: monitors EAF furnace availability (unplanned maintenance outages have a 4–6 week lead time impact), electricity price spikes that affect EAF economics and operational risk, and steel scrap export restriction announcements from key sourcing countries. For Tier 3/2/1 manufacturers: tracks IATF 16949 certification renewal schedules (automotive quality system — critical for OEM supply approval), financial health indicators, capacity utilisation and labour disputes. Calculates supply concentration risk: if 100% of the OEM's gear forgings come from one Tier 3 forge shop, a 2-month furnace outage at that forge shop is flagged as a critical single-point-of-failure.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">ATF licence: 90-day advance warning with renewal action plan issued to dismantler</div>
+      <div class="ao-line">EAF furnace outage risk: planned maintenance schedule vs OEM delivery forecast modelled</div>
+      <div class="ao-line">IATF 16949 expiry: 6-month advance warning — OEM re-qualification at risk if lapsed</div>
+      <div class="ao-line">Single-point-of-failure: 100% gear forgings from one supplier → disruption impact modelled</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-green">
+    <div class="agent-id"><span class="aid-badge ab-green">A-24</span><span style="color:var(--green)">Supply Intel</span></div>
+    <div class="agent-name">Supplier Onboarding Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span></div>
+    <div class="agent-action">Manages qualification of new dismantlers and steel scrap suppliers. For a new dismantler, manages 6-step qualification: ATF licence verification → waste carrier licence → steel scrap sorting capability assessment → first supervised collection → sample lot quality check (chemistry verification) → first commercial delivery. For SME dismantlers without ERP systems, provides a simple web portal for manual bundle declaration. For new PCR/PIR steel suppliers, manages the steel-specific qualification including mill certificate history review, chemistry consistency assessment and radiation screening documentation — the radiation screening requirement is unique to steel scrap supply and must be documented before first delivery is accepted.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">6-step dismantler qualification: ATF → carrier → sorting → supervised → sample chemistry → delivery</div>
+      <div class="ao-line">Radiation screening documentation: mandatory for all new steel scrap suppliers</div>
+      <div class="ao-line">SME dismantler portal: manual bundle declaration for operators without ERP connectivity</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-green">
+    <div class="agent-id"><span class="aid-badge ab-green">A-25</span><span style="color:var(--green)">Supply Intel</span></div>
+    <div class="agent-name">Supply Chain Mapping Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Builds and maintains the live multi-tier network map of all steel circular flow entities. Infers relationships from transaction data — if multiple dismantlers consistently use the same scrap logistics carrier to deliver to the same recycler, identifies this as a network cluster. For the steel chain, maps the complete 5-tier network: OEM → Tier 1 Assembly → Tier 2 Machining → Tier 3 Forging → Steel Recycler → [ELV Dismantlers + PCR/PIR Suppliers + Virgin Iron Producers]. Identifies geographic steel scrap supply concentration — if 70% of the steel recycler's ELV scrap comes from dismantlers in one metropolitan region, models the supply risk of a regional disruption (flood, strike, regulatory change). Also identifies shared Tier 2 machining suppliers across different Tier 1 assembly plants — a hidden concentration risk the OEM may not be aware of.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">5-tier network mapped: OEM → Tier 1 → Tier 2 → Tier 3 → Recycler → Dismantlers</div>
+      <div class="ao-line">Geographic scrap concentration: 70% ELV scrap from one region → disruption risk modelled</div>
+      <div class="ao-line">Shared Tier 2: same machining supplier used by two Tier 1s — hidden concentration flagged</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-green">
+    <div class="agent-id"><span class="aid-badge ab-green">A-26</span><span style="color:var(--green)">Supply Intel</span></div>
+    <div class="agent-name">Tier Mapping Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Specifically maps the 5-tier hierarchy of the steel chain for the OEM — Dismantler (Tier 4), Steel Recycler (Tier 3 equivalent), Forging (Tier 3), Machining (Tier 2), Assembly (Tier 1). Tracks tier data coverage: what percentage of the recycler's steel input volume has full digital traceability to source ELVs versus only lot-level documentation. Calculates compliance exposure: if 15% of PCR steel inputs lack certified recycled content declarations, this represents an uncertainty margin in the OEM's claimed vehicle-level recycled steel content. Prioritises which tier gaps to close based on regulatory risk — the ELV Directive's scrap traceability requirements create the highest urgency for ELV-origin steel documentation.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">5-tier hierarchy: Dismantler → Recycler → Tier 3 Forge → Tier 2 Machine → Tier 1 Assembly</div>
+      <div class="ao-line">Coverage score: 85% of recycler steel inputs with full digital traceability to ELV source</div>
+      <div class="ao-line">Compliance exposure: 15% undeclared PCR = uncertainty margin in OEM recycled steel %</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-green" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-green">A-27</span><span style="color:var(--green)">Supply Intel</span></div>
+    <div class="agent-name">Material Demand Forecasting Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Forecasts future availability of ELV-derived steel scrap by modelling vehicle fleet dynamics. Uses actuarial vehicle survival curves to forecast how many vehicles will reach ELV status each year by region, and what grade-segregated steel scrap mass that translates to — Shell Steel Bales (body structure, predominantly low-carbon steel) versus Other Steel Scrap (mechanical components, alloy steel). For the specific case of drivetrain gear and hub steel, identifies that the high-alloy case-hardening steel in gears is mixed with lower-grade body steel in ELV processing, creating a downgrading problem in the circular loop. Issues a 5-year supply warning: the increasing vehicle weight trend (driven by EV batteries) is growing the available ELV steel scrap pool, but the growing proportion of advanced high-strength steels (AHSS) in new vehicles will require new EAF alloy management strategies by 2028.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">ELV fleet model: Shell Steel Bales and Other Scrap volumes by region, 5-year horizon</div>
+      <div class="ao-line">Alloy steel dilution: high-alloy gear steel mixed with body steel → downgrading trend flagged</div>
+      <div class="ao-line">AHSS warning: advanced high-strength steel growing → EAF alloy management strategy needed by 2028</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CLUSTER 6: CIRCULAR OPS ═══ -->
+<div class="section-hdr" style="border-left: 3px solid var(--red)">
+  <div class="section-phase-block">
+    <div class="spb-label" style="color:var(--red)">Cluster 6 · 5 Agents</div>
+    <div class="spb-name" style="color:var(--red)">Circular Economy Ops</div>
+    <div class="spb-who">Value Maximisation · All 4 Phases</div>
+    <div class="spb-desc">Five agents that actively optimise the circular economy outcomes of the steel flow — maximising scrap value at the dismantler, recommending optimal Heat charge compositions, feeding design improvement data back to OEM engineers, matching surplus steel supply with demand across the Tier network, and measuring circular performance for ESG reporting and green finance.</div>
+  </div>
+  <div class="section-datapoints">
+    <div class="sdp-title">Circular Economy Value Data Points</div>
+    <span class="dp-chip c-red">Steel scrap yield % per ELV grade</span>
+    <span class="dp-chip c-red">Whole part reuse vs scrap value comparison</span>
+    <span class="dp-chip c-orange">EAF charge mix optimisation inputs</span>
+    <span class="dp-chip c-orange">Tramp element dilution vs virgin addition cost</span>
+    <span class="dp-chip c-steel">Gear/hub design disassembly complexity score</span>
+    <span class="dp-chip c-steel">Alloy steel yield from ELV stream</span>
+    <span class="dp-chip c-mint">OEM recycled steel procurement gap</span>
+    <span class="dp-chip c-mint">ESG circular steel KPIs</span>
+    <span class="dp-chip c-grey">Carbon credit value of EAF vs BOF steel</span>
+  </div>
+</div>
+<div class="agent-grid">
+  <div class="cluster-divider"><div class="cd-num" style="color:var(--red)">C6</div><div class="cd-name" style="color:var(--red)">Circular Economy Operations</div><div class="cd-line"></div><div class="cd-desc">5 agents · Optimise value, recovery and design across the steel circular flow</div></div>
+
+  <div class="agent-card ac-red" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-red">A-28</span><span style="color:var(--red)">Circular Ops</span></div>
+    <div class="agent-name">End-of-Life Planning Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span></div>
+    <div class="agent-action">Determines the optimal end-of-life pathway for steel components at the dismantler. For each ELV received, reads the vehicle material passport to identify high-value reusable steel components. Calculates three pathway values for each major steel component: (1) whole part reuse — a gearbox in good condition can be resold at €150–400 versus its scrap steel value of €0.32/kg × 45 kg = €14.40 — a compelling case for reuse; (2) grade-segregated scrap — a differential housing dismantled and sold as alloy steel scrap at €0.42/kg earns a 30% premium versus mixed Other Steel Scrap at €0.32/kg; (3) mixed scrap and energy recovery. Flags ADAS and electronic components attached to steel brackets — these must be removed before the steel bracket enters the scrap stream to prevent contamination of the Heat chemistry with electronic board solder. Prioritises dismantling sequence: high-value reusable components first, then grade-separated alloy steel, then body shell bales last.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Per-component: gearbox reuse (€150–400) vs scrap (€14.40) — reuse recommended</div>
+      <div class="ao-line">Grade separation: alloy steel scrap €0.42/kg vs mixed scrap €0.32/kg — 30% premium</div>
+      <div class="ao-line">ADAS flag: electronic components on steel brackets must be removed before scrapping</div>
+      <div class="ao-line">Priority sequence: reusable parts → alloy steel → body shell bales → mixed scrap</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-red" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-red">A-29</span><span style="color:var(--red)">Circular Ops</span></div>
+    <div class="agent-name">Material Recovery Optimisation Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-orange">02-Processing</span></div>
+    <div class="agent-action">Maximises the economic and environmental value of the EAF Heat charge composition. Before each Heat, solves a constrained optimisation problem: given the available inventory of Shell Steel Bales, Other Steel Scrap, PCR, PIR, pig iron, DRI and ferro-alloys, what charge mix minimises total cost per tonne of tapped steel while achieving the target chemistry specification for the specific steel grade being produced (e.g. 20MnCr5 case-hardening steel for gears requires precise carbon and manganese targets)? Calculates the tramp element dilution trade-off: adding more virgin pig iron dilutes the copper and tin tramp elements from the scrap but increases cost and carbon footprint. Recommends the charge mix that achieves the required chemistry aim within the automotive steel specification while maximising recycled content. Also optimises EAF electrical programme — recommending power input trajectory and oxygen injection timing based on the specific charge composition to minimise electrode consumption and energy per tonne.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Charge optimisation: 88% recycled blend achieving 20MnCr5 aim chemistry within specification</div>
+      <div class="ao-line">Tramp dilution: pig iron addition to bring Cu from 0.085% to 0.072% — cost vs quality calculated</div>
+      <div class="ao-line">EAF electrical programme: power/oxygen trajectory optimised per charge → electrode savings</div>
+      <div class="ao-line">Economic output: charge cost minimised while maintaining recycled% ≥85% for OEM specification</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-red">
+    <div class="agent-id"><span class="aid-badge ab-red">A-30</span><span style="color:var(--red)">Circular Ops</span></div>
+    <div class="agent-name">Design for Disassembly Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Analyses gear, pinion and wheel hub designs and provides quantified feedback to OEM engineers on how to design the next generation for easier end-of-life disassembly and higher-value steel recovery. Reads CAD/BOM data for current drivetrain designs: identifies that press-fit wheel bearings are bonded into hub assemblies with interference fits and adhesive sealant — making clean aluminium/steel separation at EoL costly (adding €2.80 per hub in separation labour). Identifies that a current pinion design uses a bi-metallic assembly (alloy steel body with a cast iron ring gear) that prevents clean grade separation at EoL, causing the entire component to be classified as mixed metal scrap at a €0.32/kg versus €0.42/kg for segregated alloy steel. Provides a design-for-recyclability score per component and a redesign brief with quantified EoL value impact per change.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Bearing bond analysis: adhesive seal → €2.80/hub separation cost → interference-only recommended</div>
+      <div class="ao-line">Bi-metallic pinion: alloy+cast iron = mixed scrap (€0.32) vs segregated (€0.42) — redesign brief</div>
+      <div class="ao-line">DfR score: wheel hub 5.8/10 → 8.2/10 target with 3 identified design changes</div>
+      <div class="ao-line">Alloy steel recovery uplift: redesign enables 42% more alloy-grade steel recovery at EoL</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-red" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-red">A-31</span><span style="color:var(--red)">Circular Ops</span></div>
+    <div class="agent-name">Circular Opportunity Matching Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Brokers circular steel material transactions across the network. When the steel recycler has produced a surplus of 20MnCr5 alloy steel bars above the contracted Tier 3 volume, identifies other Tier 3 forge shops or engineering steel distributors whose specifications this lot meets and facilitates commercial introduction. Conversely, when an OEM announces a 20% increase in drivetrain production volume, reverse-searches the network for which steel recyclers and scrap collections can supply the additional 88% recycled steel bars in the required grade and timeline — creating forward purchase commitments to secure the supply before the market absorbs it. Calculates the regulatory compliance value of each transaction: this additional bar lot containing 88% recycled steel content closes 1.8% of the OEM's annual CSRD recycled steel target gap.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Surplus 20MnCr5 bars: matched to alternative Tier 3 forge shops with compatible specs</div>
+      <div class="ao-line">Production increase: 20% OEM drivetrain growth → additional scrap sourcing initiated forward</div>
+      <div class="ao-line">Compliance value: this bar lot closes 1.8% of OEM annual CSRD recycled steel target gap</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-red" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-red">A-32</span><span style="color:var(--red)">Circular Ops</span></div>
+    <div class="agent-name">ESG Scoring Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Generates verifiable ESG scores for every participant in the steel circular flow based on actual data. Dismantler score: steel recovery rate (recovered kg vs total steel mass in ELVs processed), grade-separated yield rate (alloy steel vs mixed scrap), hazardous substance management compliance, ATF and CoD completeness. Steel recycler score: recycled content achieved vs maximum achievable given scrap inventory (if 95% of available inputs are recycled-origin but the recycler is only achieving 88%, the gap is flagged), EAF energy intensity per tonne versus World Steel Association benchmark, SVHC substance management. Tier 3/2/1 scores: IATF 16949 compliance, energy intensity per part, recycled steel content in products versus benchmark. OEM score: vehicle-level recycled steel trajectory versus ELV Directive target, CSRD disclosure quality and completeness. All scores updated monthly, enabling green steel financing instruments to be priced against verified, real-time performance.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Dismantler score: steel recovery 96.4% vs 92% benchmark + alloy segregation rate 78%</div>
+      <div class="ao-line">Recycler score: 88% recycled achieved vs 92% feasible — 4pp gap flagged for improvement</div>
+      <div class="ao-line">EAF energy: 385 kWh/t vs World Steel 410 kWh/t benchmark → above-average efficiency</div>
+      <div class="ao-line">Monthly dynamic update: scores linked to green steel finance covenant thresholds</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CLUSTER 7: INTELLIGENCE & ANALYTICS ═══ -->
+<div class="section-hdr" style="border-left: 3px solid var(--purple)">
+  <div class="section-phase-block">
+    <div class="spb-label" style="color:var(--purple)">Cluster 7 · 3 Agents</div>
+    <div class="spb-name" style="color:var(--purple)">Intelligence &amp; Analytics</div>
+    <div class="spb-who">Pattern Recognition · All 4 Phases</div>
+    <div class="spb-desc">Three agents that watch the entire steel circular flow for anomalies, predict future risks before they materialise and ensure every stakeholder receives the right information at the right time. In the steel chain, the critical anomaly detection focus is on Heat chemistry fraud, scrap weight manipulation and tramp element accumulation trends — all of which are economically motivated and have significant quality and safety implications for automotive parts.</div>
+  </div>
+  <div class="section-datapoints">
+    <div class="sdp-title">Intelligence &amp; Analytics Data Inputs</div>
+    <span class="dp-chip c-red">Historical steel recovery rates per dismantler</span>
+    <span class="dp-chip c-orange">Heat chemistry trends per recycler</span>
+    <span class="dp-chip c-orange">Tramp element accumulation trajectory</span>
+    <span class="dp-chip c-steel">Forging and machining defect rates per bar lot</span>
+    <span class="dp-chip c-mint">OEM warranty claims on steel parts</span>
+    <span class="dp-chip c-grey">All 35 agent action audit logs</span>
+    <span class="dp-chip c-purple">Statistical anomaly patterns across chemistry data</span>
+    <span class="dp-chip c-purple">Predictive quality risk scores per Heat</span>
+  </div>
+</div>
+<div class="agent-grid">
+  <div class="cluster-divider"><div class="cd-num" style="color:var(--purple)">C7</div><div class="cd-name" style="color:var(--purple)">Intelligence &amp; Analytics</div><div class="cd-line"></div><div class="cd-desc">3 agents · Pattern detection, prediction and communication across all 4 phases</div></div>
+
+  <div class="agent-card ac-purple" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-purple">A-33</span><span style="color:var(--purple)">Intelligence</span></div>
+    <div class="agent-name">Anomaly Detection Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Monitors all data flows across the steel chain for statistical anomalies, fraud signals and quality deviations. At phase 01, detects if a dismantler's scrap bundle weights are consistently reporting in suspiciously round numbers (always exactly 500 kg, 1000 kg, 1500 kg) — indicating possible manual override of weighbridge. Also detects if a dismantler's Shell Steel Bales to Other Steel Scrap ratio is anomalously stable across many ELVs (real dismantling produces variable ratios depending on vehicle model mix). At phase 02, the most critical steel-specific anomaly: detects systematic under-declaration of copper (Cu) content in scrap bundles. If a supplier consistently declares Cu below 0.04% but the Heat spectrometry results show Cu above 0.06% in Heats containing their scrap, this agent flags the correlation over multiple Heats as evidence of systematic misrepresentation — triggering supplier audit and potential commercial claim. Also detects tramp element accumulation trends: if Cu levels in Heats have been rising by 0.003% per Heat over the past 30 Heats, projects when the automotive Cu limit will be exceeded and alerts the procurement team to increase virgin dilution or source lower-Cu scrap. At phase 03, detects if forging defect rates for a specific bar lot are 2.5× the historical average, tracing back to the Heat number and identifying the likely root cause (out-of-spec chemistry or temperature deviation in the bar rolling).</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Round-number anomaly: dismantler weights always 500/1000/1500 kg → weighbridge audit triggered</div>
+      <div class="ao-line">Cu misrepresentation: declared &lt;0.04% vs spectrometry 0.06+ across 8 Heats → supplier audit</div>
+      <div class="ao-line">Tramp accumulation: Cu rising 0.003%/Heat over 30 Heats → limit breach projected + alert</div>
+      <div class="ao-line">Forging defect spike: 2.5× average for bar lot → Heat chemistry root cause investigation</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-purple" style="grid-column:span 2">
+    <div class="agent-id"><span class="aid-badge ab-purple">A-34</span><span style="color:var(--purple)">Intelligence</span></div>
+    <div class="agent-name">Predictive Analytics Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Uses ML models trained on MANJU historical steel data to generate forward-looking predictions. Trains a Heat chemistry prediction model: given the charge mix composition (scrap sources, grades, weights) and EAF operational parameters, predicts the final tapped chemistry before the Heat is complete — allowing the metallurgist to make alloy additions proactively rather than reactively, reducing alloy costs by 8–12% and improving first-time chemistry compliance from 87% to 94%. Trains a forging defect predictor: identifies that bar lots with Carbon Equivalent above 0.52 and forging temperature below 1150°C produce a 3.2× higher surface crack rate in gear forgings — issues pre-run warnings to the forge shop. Trains a recycled content compliance model: based on current scrap inventory, planned Heat schedule and contracted OEM bar lots, calculates the probability that the recycler meets the OEM's contracted 85% minimum recycled steel content across the quarter — and identifies which specific Heats are at risk.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Chemistry prediction: tapped composition estimated mid-Heat → alloy addition cost saved 8–12%</div>
+      <div class="ao-line">First-time chemistry compliance: 87% → 94% with predictive alloy guidance</div>
+      <div class="ao-line">Forging defect predictor: CE &gt;0.52 + temp &lt;1150°C → 3.2× crack rate → pre-run warning</div>
+      <div class="ao-line">Quarterly compliance forecast: probability of 85% recycled steel target met per contracted volume</div>
+    </div>
+  </div>
+
+  <div class="agent-card ac-purple">
+    <div class="agent-id"><span class="aid-badge ab-purple">A-35</span><span style="color:var(--purple)">Intelligence</span></div>
+    <div class="agent-name">Stakeholder Communication Agent</div>
+    <div class="agent-phase-tags"><span class="phase-tag pt-red">01-Origin</span><span class="phase-tag pt-orange">02-Processing</span><span class="phase-tag pt-steel">03-Manufacture</span><span class="phase-tag pt-mint">04-Assembly</span></div>
+    <div class="agent-action">Manages all automated communications across the steel circular chain. At phase 01, sends the dismantler scrap bundle acceptance or rejection within 5 minutes of delivery data receipt — including specific field-level failure reasons (weight discrepancy, chemistry mismatch, missing ATF reference). At phase 02, coordinates the CSRD supplier declaration campaign for the steel chain: pre-filled templates sent to all scrap suppliers, PCR/PIR sources and virgin iron material providers simultaneously, tracking response rates and escalating non-responders. Issues mill certificate dispatch confirmations from the steel recycler to all Tier 3 customers within 2 hours of Heat tapping — automotive supply chains require rapid chemistry confirmation to release forge shop production planning. Generates technical communications in the appropriate technical format: mill test certificates for steel producers, PPAP (Production Part Approval Process) submission packages for Tier 1/OEM interfaces. Multilingual: German, English, Japanese and Korean for the full global steel automotive supply chain.</div>
+    <div class="agent-outputs">
+      <div class="ao-line">Bundle acceptance: communicated to dismantler within 5 minutes with field-level rejection reasons</div>
+      <div class="ao-line">Mill cert dispatch: tapped Heat chemistry confirmed to all Tier 3 customers within 2 hours</div>
+      <div class="ao-line">CSRD campaign: all scrap and virgin iron suppliers contacted, tracked and escalated</div>
+      <div class="ao-line">PPAP packages: auto-assembled and dispatched to Tier 1/OEM for each new bar lot qualification</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item"><div class="sn">35</div><div class="sl">MANJU Agents<br>Fully Detailed</div></div>
+  <div class="stat-item"><div class="sn a">4</div><div class="sl">Value Chain<br>Phases Covered</div></div>
+  <div class="stat-item"><div class="sn t">5</div><div class="sl">Stakeholder<br>Tiers Mapped</div></div>
+  <div class="stat-item"><div class="sn">3</div><div class="sl">Steel Process<br>Stages Tracked</div></div>
+  <div class="stat-item"><div class="sn a">88%</div><div class="sl">Recycled Content<br>Achieved &amp; Evidenced</div></div>
+  <div class="stat-item"><div class="sn t">75%</div><div class="sl">Carbon Reduction<br>EAF vs BOF Virgin Steel</div></div>
+  <div class="stat-item"><div class="sn">ELV→</div><div class="sl">Circular Loop<br>Closed &amp; Auditable</div></div>
+  <div class="stat-item"><div class="sn r">0</div><div class="sl">Compliance Gaps<br>Undetected</div></div>
+</div>
+
+<div class="footer">
+  <div class="footer-brand">Circular Intelligence &nbsp;·&nbsp; Powered by <span>MANJU</span></div>
+  <div class="legend">
+    <div class="legend-item"><div class="ldot" style="background:var(--mint)"></div>C1 Orchestration</div>
+    <div class="legend-item"><div class="ldot" style="background:var(--teal)"></div>C2 Data Ingestion</div>
+    <div class="legend-item"><div class="ldot" style="background:var(--blue)"></div>C3 Traceability</div>
+    <div class="legend-item"><div class="ldot" style="background:var(--amber)"></div>C4 Compliance</div>
+    <div class="legend-item"><div class="ldot" style="background:var(--green)"></div>C5 Supply Intel</div>
+    <div class="legend-item"><div class="ldot" style="background:var(--red)"></div>C6 Circular Ops</div>
+    <div class="legend-item"><div class="ldot" style="background:var(--purple)"></div>C7 Intelligence</div>
+    <div class="legend-item"><div class="ldot" style="background:var(--orange)"></div>Phase 02: Heat→Bar</div>
+    <div class="legend-item"><div class="ldot" style="background:var(--steel)"></div>Phase 03: Forge→Assembly</div>
+  </div>
+  <div class="footer-copy">Steel Circular Flow 35-Agent Deep Dive &nbsp;·&nbsp; v1.0 &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; Confidential</div>
+</div>
+
+</body>
+</html>

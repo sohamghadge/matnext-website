@@ -1,31 +1,33 @@
-import Header from './components/Header';
-import Hero from './components/Hero';
-import FeatureGrid from './components/FeatureGrid';
-import LiveMetrics from './components/LiveMetrics';
-import Customers from './components/Customers';
-import WhyMatnext from './components/WhyMatnext';
-import ReadySection from './components/ReadySection';
-import LearnMore from './components/LearnMore';
-import AICoreSection from './components/AICoreSection';
-import Testimonials from './components/Testimonials';
-import Footer from './components/Footer';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import StaticHtmlPage from './pages/StaticHtmlPage';
 
 export default function App() {
   return (
-    <>
-      <Header />
-      <main>
-        <Hero />
-        <FeatureGrid />
-        <LiveMetrics />
-        <Customers />
-        <AICoreSection />
-        <WhyMatnext />
-        <Testimonials />
-        <ReadySection />
-        <LearnMore />
-        <Footer />
-      </main>
-    </>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+
+      <Route
+        path="/steel-knowledge-graph"
+        element={
+          <StaticHtmlPage
+            title="Steel Knowledge Graph"
+            srcPath="/steel-knowledge-graph.html"
+          />
+        }
+      />
+
+      <Route
+        path="/agents-steel-deepdive"
+        element={
+          <StaticHtmlPage
+            title="Agents Steel Deep Dive"
+            srcPath="/agents-steel-deepdive.html"
+          />
+        }
+      />
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MANJU Knowledge Graph — Steel Circular Value Chain</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0D1B2A;--navy2:#1A3A52;--navy3:#0A2540;--navy4:#162433;--navy5:#0f2234;
+  --mint:#02C39A;--teal:#028090;--amber:#F4A261;--red:#E63946;
+  --purple:#9B59B6;--blue:#378ADD;--green:#48BB78;--gold:#F1C40F;
+  --orange:#E67E22;--steel:#7F8C9A;--cyan:#17A589;
+  --white:#FFFFFF;--grey1:#A0AEC0;--grey2:#4A5568;--grey3:#1E3448;--grey4:#243B55;
+}
+html{scroll-behavior:smooth}
+body{background:var(--navy);font-family:'Poppins',sans-serif;color:var(--white);min-width:1400px;line-height:1}
+
+/* HEADER */
+.hdr{background:var(--navy3);border-bottom:2px solid rgba(231,126,34,.3);padding:22px 48px 18px;display:flex;align-items:flex-start;justify-content:space-between}
+.wm{font-size:40px;font-weight:900;letter-spacing:-.03em;line-height:1}.wm .ju{color:var(--mint)}.wm .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--mint);margin-left:2px;vertical-align:middle;margin-bottom:5px}
+.hdr-sub{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--grey1);letter-spacing:.13em;text-transform:uppercase;margin-top:5px}
+.hdr-r{text-align:right}.hdr-tag{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--orange);letter-spacing:.15em;text-transform:uppercase;margin-bottom:3px}
+.hdr-title{font-size:16px;font-weight:700;line-height:1.2}.hdr-desc{font-size:9px;color:var(--grey1);font-weight:300;margin-top:4px;max-width:440px;line-height:1.55}
+
+/* SECTION STRIPS */
+.sec-strip{display:flex;align-items:center;gap:14px;padding:10px 48px;background:var(--navy4);border-bottom:1px solid rgba(255,255,255,.05)}
+.ss-num{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:500}
+.ss-title{font-size:13px;font-weight:700}.ss-desc{font-size:9px;color:var(--grey1);font-weight:300}.ss-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
+
+.body{padding:0 48px 36px}
+
+/* KG HERO */
+.kg-hero{display:grid;grid-template-columns:1fr 340px;gap:20px;margin:22px 0 18px}
+.kg-intro-text{display:flex;flex-direction:column;gap:10px}
+.intro-card{background:var(--navy4);border-radius:10px;border:1px solid rgba(255,255,255,.07);padding:13px 15px}
+.intro-label{font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+.intro-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.intro-body{font-size:8.5px;color:var(--grey1);font-weight:300;line-height:1.6}
+.kg-stats-tower{display:flex;flex-direction:column;gap:7px}
+.kst-card{background:var(--navy4);border-radius:10px;border:1px solid rgba(255,255,255,.07);padding:11px 14px;display:flex;align-items:center;gap:12px}
+.kst-num{font-size:26px;font-weight:900;letter-spacing:-.03em;line-height:1;flex-shrink:0;min-width:64px}
+.kst-label{font-size:10px;font-weight:700;color:var(--white)}.kst-sub{font-size:7.5px;color:var(--grey1);font-weight:300;margin-top:2px;line-height:1.4}
+
+/* GRAPH CANVAS */
+.gv-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.graph-canvas{background:var(--navy5);border:1px solid rgba(231,126,34,.15);border-radius:14px;padding:28px;position:relative;overflow:hidden;margin-bottom:20px}
+.graph-canvas::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(231,126,34,.04) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.graph-layout{display:grid;grid-template-columns:200px 1fr 200px;gap:10px;align-items:center;min-height:580px;position:relative}
+.g-col-left,.g-col-right{display:flex;flex-direction:column;gap:10px}
+.g-col-center{display:grid;grid-template-rows:1fr 160px 1fr;grid-template-columns:1fr 150px 1fr;gap:10px;align-items:center;justify-items:center}
+.gcc-top{display:flex;gap:10px;align-items:flex-end;grid-column:1/-1;justify-content:center}
+.gcc-mid-l{grid-column:1;grid-row:2;justify-self:end}
+.gcc-mid-c{grid-column:2;grid-row:2}
+.gcc-mid-r{grid-column:3;grid-row:2;justify-self:start}
+.gcc-bot{display:flex;gap:10px;align-items:flex-start;grid-column:1/-1;justify-content:center}
+.graph-svg{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:visible}
+.edge{stroke-width:1.2;fill:none;opacity:.4;stroke-dasharray:5 4;animation:dashFlow 3s linear infinite}
+.edge-solid{stroke-width:1.5;fill:none;opacity:.5}
+@keyframes dashFlow{to{stroke-dashoffset:-18}}
+
+/* NODE CARDS */
+.ng-node{border-radius:9px;padding:10px 11px;border:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden;cursor:default;transition:border-color .2s,transform .2s;width:186px}
+.ng-node:hover{transform:translateY(-2px)}.ng-node::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.ng-node.sm{width:152px;padding:8px 10px}
+.nn-orange{background:rgba(231,126,34,.07);border-color:rgba(231,126,34,.3)}.nn-orange::before{background:var(--orange)}
+.nn-red{background:rgba(230,57,70,.07);border-color:rgba(230,57,70,.3)}.nn-red::before{background:var(--red)}
+.nn-steel{background:rgba(127,140,154,.07);border-color:rgba(127,140,154,.3)}.nn-steel::before{background:var(--steel)}
+.nn-teal{background:rgba(2,128,144,.08);border-color:rgba(2,128,144,.3)}.nn-teal::before{background:var(--teal)}
+.nn-mint{background:rgba(2,195,154,.07);border-color:rgba(2,195,154,.3)}.nn-mint::before{background:var(--mint)}
+.nn-blue{background:rgba(55,138,221,.07);border-color:rgba(55,138,221,.3)}.nn-blue::before{background:var(--blue)}
+.nn-purple{background:rgba(155,89,182,.07);border-color:rgba(155,89,182,.3)}.nn-purple::before{background:var(--purple)}
+.nn-green{background:rgba(72,187,120,.07);border-color:rgba(72,187,120,.3)}.nn-green::before{background:var(--green)}
+.nn-amber{background:rgba(244,162,97,.07);border-color:rgba(244,162,97,.3)}.nn-amber::before{background:var(--amber)}
+.nn-gold{background:rgba(241,196,15,.07);border-color:rgba(241,196,15,.3)}.nn-gold::before{background:var(--gold)}
+.nn-orange .nn-type{color:var(--orange)}.nn-red .nn-type{color:var(--red)}.nn-steel .nn-type{color:var(--steel)}
+.nn-teal .nn-type{color:var(--teal)}.nn-mint .nn-type{color:var(--mint)}.nn-blue .nn-type{color:var(--blue)}
+.nn-purple .nn-type{color:var(--purple)}.nn-green .nn-type{color:var(--green)}.nn-amber .nn-type{color:var(--amber)}.nn-gold .nn-type{color:var(--gold)}
+.nn-orange .nn-count{color:var(--orange)}.nn-red .nn-count{color:var(--red)}.nn-steel .nn-count{color:var(--steel)}
+.nn-teal .nn-count{color:var(--teal)}.nn-mint .nn-count{color:var(--mint)}.nn-blue .nn-count{color:var(--blue)}
+.nn-purple .nn-count{color:var(--purple)}.nn-green .nn-count{color:var(--green)}.nn-amber .nn-count{color:var(--amber)}.nn-gold .nn-count{color:var(--gold)}
+.nn-icon{font-size:15px;margin-bottom:3px;line-height:1}
+.nn-type{font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px}
+.nn-name{font-size:10.5px;font-weight:700;color:var(--white);margin-bottom:4px;line-height:1.2}
+.nn-props{display:flex;flex-direction:column;gap:2px}
+.nn-prop{font-family:'JetBrains Mono',monospace;font-size:6.5px;color:var(--grey1);display:flex;align-items:flex-start;gap:3px;line-height:1.4}
+.nn-prop::before{content:'·';flex-shrink:0}
+.nn-count{font-family:'JetBrains Mono',monospace;font-size:7px;margin-top:4px;padding:2px 6px;border-radius:3px;background:rgba(255,255,255,.05);width:fit-content}
+
+/* KG CENTER */
+.kg-core-ring{width:130px;height:130px;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(231,126,34,.2),rgba(231,126,34,.04) 70%);border:2px solid rgba(231,126,34,.5);display:flex;align-items:center;justify-content:center;animation:pulse 3.5s ease-in-out infinite;position:relative}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(231,126,34,0),0 0 0 8px rgba(231,126,34,.04)}50%{box-shadow:0 0 0 14px rgba(231,126,34,.07),0 0 0 28px rgba(231,126,34,.02)}}
+.kg-core-ring::before,.kg-core-ring::after{content:'';position:absolute;width:7px;height:7px;border-radius:50%;background:var(--orange);animation:orbit 6s linear infinite}
+.kg-core-ring::after{width:5px;height:5px;background:var(--steel);animation-duration:9s;animation-delay:-3s}
+@keyframes orbit{from{transform:rotate(0deg) translateX(65px) rotate(0deg)}to{transform:rotate(360deg) translateX(65px) rotate(-360deg)}}
+.kg-core-inner{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(231,126,34,.25),var(--navy) 75%);border:1px solid rgba(231,126,34,.6);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.kc-title{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:500;color:var(--orange);letter-spacing:.06em;text-align:center;line-height:1.4}
+.kc-sub{font-size:7px;font-weight:700;color:var(--white);margin-top:2px;text-align:center;line-height:1.2}
+.kc-stat{font-family:'JetBrains Mono',monospace;font-size:6.5px;color:var(--orange);margin-top:3px;text-align:center}
+
+/* LAYERS */
+.layers-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.layer-card{border-radius:10px;border:1px solid rgba(255,255,255,.07);padding:13px 14px;position:relative;overflow:hidden}
+.layer-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px}
+.lc-orange::before{background:var(--orange)}.lc-teal::before{background:var(--teal)}.lc-amber::before{background:var(--amber)}.lc-steel::before{background:var(--steel)}
+.layer-num{font-family:'JetBrains Mono',monospace;font-size:7.5px;font-weight:500;margin-bottom:3px}
+.lc-orange .layer-num{color:var(--orange)}.lc-teal .layer-num{color:var(--teal)}.lc-amber .layer-num{color:var(--amber)}.lc-steel .layer-num{color:var(--steel)}
+.layer-name{font-size:12px;font-weight:700;color:var(--white);margin-bottom:4px}.layer-desc{font-size:8px;color:var(--grey1);font-weight:300;line-height:1.6;margin-bottom:6px}
+.layer-items{display:flex;flex-wrap:wrap;gap:3px}
+.li-chip{font-family:'JetBrains Mono',monospace;font-size:6.5px;padding:2px 6px;border-radius:3px;background:rgba(255,255,255,.05);color:var(--grey1);border:1px solid rgba(255,255,255,.07)}
+
+/* RELATIONSHIPS */
+.rel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:20px}
+.rel-card{background:var(--navy4);border-radius:10px;border:1px solid rgba(255,255,255,.06);padding:11px 13px}
+.rel-header{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.rel-from{font-size:8.5px;font-weight:700;padding:2px 7px;border-radius:4px}
+.rel-arrow{font-size:11px;color:var(--grey1)}
+.rel-verb{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--orange);background:rgba(231,126,34,.1);padding:2px 6px;border-radius:3px;border:1px solid rgba(231,126,34,.25)}
+.rel-to{font-size:8.5px;font-weight:700;padding:2px 7px;border-radius:4px}
+.rel-props{display:flex;flex-direction:column;gap:2px}
+.rel-prop{font-size:7.5px;color:var(--grey1);font-weight:300;display:flex;align-items:flex-start;gap:4px;line-height:1.4}
+.rel-prop::before{content:'→';color:var(--orange);flex-shrink:0;font-size:7px;margin-top:1px}
+
+/* QUERIES */
+.query-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.query-card{background:var(--navy4);border-radius:10px;border:1px solid rgba(255,255,255,.06);padding:12px 13px}
+.qc-tag{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.qc-question{font-size:9.5px;font-weight:700;color:var(--white);line-height:1.35;margin-bottom:6px}
+.qc-cypher{font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--orange);background:rgba(231,126,34,.06);border:1px solid rgba(231,126,34,.15);border-radius:6px;padding:7px 9px;line-height:1.7;margin-bottom:6px}
+.qc-result{font-size:8px;color:var(--grey1);font-weight:300;line-height:1.5}.qc-highlight{color:var(--orange);font-weight:600}
+
+/* AGENT LANES */
+.agent-lanes{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:20px}
+.al-cluster{border-radius:9px;border:1px solid rgba(255,255,255,.06);padding:9px 10px;position:relative;overflow:hidden}
+.al-cluster::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.al-mint::before{background:var(--mint)}.al-teal::before{background:var(--teal)}.al-blue::before{background:var(--blue)}.al-amber::before{background:var(--amber)}.al-green::before{background:var(--green)}.al-red::before{background:var(--red)}.al-purple::before{background:var(--purple)}
+.al-c-label{font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.al-mint .al-c-label{color:var(--mint)}.al-teal .al-c-label{color:var(--teal)}.al-blue .al-c-label{color:var(--blue)}.al-amber .al-c-label{color:var(--amber)}.al-green .al-c-label{color:var(--green)}.al-red .al-c-label{color:var(--red)}.al-purple .al-c-label{color:var(--purple)}
+.al-c-name{font-size:8px;font-weight:700;color:var(--white);margin-bottom:6px;line-height:1.35}
+.al-rw-title{font-family:'JetBrains Mono',monospace;font-size:5.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey2);margin-bottom:2px}
+.al-writes,.al-reads{display:flex;flex-direction:column;gap:2px}
+.al-writes{margin-bottom:4px}.al-reads{border-top:1px solid rgba(255,255,255,.05);padding-top:4px}
+.al-write,.al-read{font-family:'JetBrains Mono',monospace;font-size:6px;display:flex;align-items:flex-start;gap:3px;line-height:1.4}
+.al-write{color:var(--grey1)}.al-write::before{content:'↗';flex-shrink:0;font-size:7px}
+.al-read{color:var(--grey2)}.al-read::before{content:'↙';flex-shrink:0;font-size:7px;color:var(--grey2)}
+.al-mint .al-write::before{color:var(--mint)}.al-teal .al-write::before{color:var(--teal)}.al-blue .al-write::before{color:var(--blue)}.al-amber .al-write::before{color:var(--amber)}.al-green .al-write::before{color:var(--green)}.al-red .al-write::before{color:var(--red)}.al-purple .al-write::before{color:var(--purple)}
+
+/* STORAGE */
+.storage-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stor-card{background:var(--navy4);border-radius:10px;border:1px solid rgba(255,255,255,.07);padding:13px 14px}
+.stor-icon{font-size:20px;margin-bottom:7px;line-height:1}
+.stor-name{font-size:12px;font-weight:700;color:var(--white);margin-bottom:3px}
+.stor-type{font-family:'JetBrains Mono',monospace;font-size:7px;margin-bottom:6px}
+.stor-desc{font-size:8px;color:var(--grey1);font-weight:300;line-height:1.6;margin-bottom:7px}
+.stor-specs{display:flex;flex-direction:column;gap:3px}
+.stor-spec{font-family:'JetBrains Mono',monospace;font-size:6.5px;color:var(--grey2);display:flex;gap:5px}
+.stor-spec-k{color:var(--grey1);min-width:56px;flex-shrink:0}
+
+/* STATS */
+.stats-bar{display:flex;background:var(--navy3);border-top:1px solid rgba(231,126,34,.2);border-bottom:1px solid rgba(231,126,34,.1)}
+.stat-item{flex:1;padding:12px 16px;text-align:center;border-right:1px solid rgba(255,255,255,.05)}
+.stat-item:last-child{border-right:none}
+.sn{font-size:20px;font-weight:900;color:var(--orange);line-height:1;letter-spacing:-.03em}
+.sn.m{color:var(--mint)}.sn.t{color:var(--teal)}.sn.r{color:var(--red)}.sn.s{color:var(--steel)}.sn.p{color:var(--purple)}
+.sl{font-size:8px;color:var(--grey1);font-weight:300;margin-top:3px;line-height:1.3}
+
+/* FOOTER */
+.footer{display:flex;align-items:center;justify-content:space-between;padding:12px 48px;background:var(--navy3);border-top:1px solid rgba(255,255,255,.05)}
+.footer-brand{font-size:11px;font-weight:700;color:var(--grey2)}.footer-brand span{color:var(--mint)}
+.legend{display:flex;gap:13px;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--grey1)}
+.ld{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--grey2)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div>
+    <div class="wm">MAN<span class="ju">JU</span><span class="dot"></span></div>
+    <div class="hdr-sub">Knowledge Graph &nbsp;·&nbsp; Steel Circular Value Chain &nbsp;·&nbsp; Architecture, Design &amp; Content</div>
+  </div>
+  <div class="hdr-r">
+    <div class="hdr-tag">35 Agents · 1 Living Steel Graph · Heat Number as Primary Traceability Link</div>
+    <div class="hdr-title">The MANJU Knowledge Graph:<br>Steel Edition — ELV Scrap to Gears, Pinions &amp; Wheel Hubs</div>
+    <div class="hdr-desc">Every action taken by every agent across the steel circular value chain — from ELV dismantling through EAF Heat, Continuous Casting, Post-Processing, DIA Rolling, Tier 3 Forging, Tier 2 Machining, Tier 1 Assembly to OEM vehicle integration — is a read or write operation on the MANJU Steel Knowledge Graph. The Heat number replaces the pellet lot as the primary traceability unit. Tramp element accumulation, per-Heat carbon intensity and 5-tier manufacturing genealogy are the defining data structures that make steel traceability architecturally distinct from plastics.</div>
+  </div>
+</div>
+
+<!-- SECTION 1 -->
+<div class="sec-strip">
+  <div class="ss-num" style="color:var(--orange)">01</div>
+  <div class="ss-title" style="color:var(--orange)">What Makes the Steel Knowledge Graph Distinct</div>
+  <div class="ss-line"></div>
+  <div class="ss-desc">The Heat number as primary traceability unit, tramp element accumulation as a cross-generational data structure, and 5-tier manufacturing genealogy</div>
+</div>
+<div class="body">
+<div class="kg-hero">
+  <div class="kg-intro-text">
+    <div class="intro-card" style="border-color:rgba(231,126,34,.25)">
+      <div class="intro-label" style="color:var(--orange)">Steel-Specific Architecture</div>
+      <div class="intro-title" style="color:var(--white)">The Heat Number: Steel's Primary Traceability Node</div>
+      <div class="intro-body">In the PP plastic flow, the pellet lot is the primary traceability unit. In the steel circular chain, the <strong style="color:var(--orange)">Heat number</strong> takes this role — a unique identifier assigned to each EAF melt campaign (typically 100–180 tonnes). A single Heat merges inputs from multiple scrap bundles, PCR/PIR lots and virgin iron sources, making the Heat node the most data-dense entity in the graph. Every downstream product — billets, bars, forgings, machined parts — inherits its recycled content, chemistry declaration and carbon footprint from the Heat node that created the liquid steel. This parent-child inheritance is the core of steel traceability: <code style="color:var(--orange)">ELV scrap bundles → :Heat → :Billet → :Bar → :ForgedBlank → :MachinedPart → :Vehicle</code>.</div>
+    </div>
+    <div class="intro-card" style="border-color:rgba(127,140,154,.25)">
+      <div class="intro-label" style="color:var(--steel)">Cross-Generational Data Structure</div>
+      <div class="intro-title" style="color:var(--white)">Tramp Element Accumulation — A Unique Steel Graph Feature</div>
+      <div class="intro-body">Steel's circular economy has a fundamental challenge that plastics do not: <strong style="color:var(--steel)">tramp elements</strong> (copper Cu, tin Sn, lead Pb, antimony Sb) cannot be removed during EAF steelmaking and accumulate with every recycling generation. The MANJU steel graph stores the full tramp element history on every :Heat node and propagates it through all downstream :Part nodes. Agent A-33 (Anomaly Detection) runs cross-Heat Cu accumulation trend analysis — querying the graph for Cu concentration trajectories across successive Heats from the same scrap supplier. This cross-generational intelligence is impossible in a relational database but trivial in a property graph: <code style="color:var(--steel)">MATCH path = (:ScrapSupplier)-[:SUPPLIED_TO*1..20]->(:Heat) RETURN nodes(path), [n IN nodes(path) | n.cu_pct]</code>.</div>
+    </div>
+    <div class="intro-card" style="border-color:rgba(2,128,144,.25)">
+      <div class="intro-label" style="color:var(--teal)">Five-Tier Manufacturing Genealogy</div>
+      <div class="intro-title" style="color:var(--white)">Deeper Traversal Than Plastics — 5 Manufacturing Tiers</div>
+      <div class="intro-body">The steel chain has a deeper manufacturing hierarchy than the PP plastic chain. Where PP goes <em>Recycler → Moulder → OEM</em> (3 nodes), steel goes <em>Recycler → Tier 3 Forging → Tier 2 Machining → Tier 1 Assembly → OEM</em> (5 nodes). Each tier adds a new layer of part transformation, dimensional inspection data and energy consumption records. The MANJU graph handles this with variable-depth <code style="color:var(--teal)">[:TRANSFORMED_INTO*1..5]</code> traversal patterns — allowing a single query to follow the material from any point in the chain to any other point regardless of depth. A gear serial can be traced to its source ELV VINs through 7 graph hops in under 50ms.</div>
+    </div>
+  </div>
+  <div class="kg-stats-tower">
+    <div class="kst-card"><div class="kst-num" style="color:var(--orange)">20</div><div class="kst-detail"><div class="kst-label">Node Types</div><div class="kst-sub">ScrapBundle, Heat, Billet, BarLot, ForgedBlank, MachinedPart, Assembly, Vehicle(ELV), Vehicle(New), Facility, Organisation, Certificate, CarbonRecord, ChemistryRecord, SubstanceDecl, TrampElementLog, Regulation, DigitalProductPassport, AgentAction, Workflow</div></div></div>
+    <div class="kst-card"><div class="kst-num" style="color:var(--steel)">46</div><div class="kst-detail"><div class="kst-label">Relationship Types</div><div class="kst-sub">MELTED_INTO, CAST_INTO, ROLLED_INTO, FORGED_FROM, MACHINED_FROM, ASSEMBLED_INTO, ORIGINATES_FROM_ELV, HAS_CHEMISTRY, HAS_TRAMP_ELEMENT_LOG, DERIVED_FROM, COMPLIES_WITH, VIOLATES, HAS_CARBON_FOOTPRINT and 33 others</div></div></div>
+    <div class="kst-card"><div class="kst-num" style="color:var(--teal)">7</div><div class="kst-detail"><div class="kst-label">Semantic Layers</div><div class="kst-sub">Physical Steel Flow · Provenance &amp; Custody · Chemistry &amp; Tramp Elements · Compliance &amp; Regulatory · Carbon PCF · Digital Passports · Agent Audit</div></div></div>
+    <div class="kst-card"><div class="kst-num" style="color:var(--mint)">35</div><div class="kst-detail"><div class="kst-label">Agents Reading &amp; Writing</div><div class="kst-sub">Role-based Cypher grants at query level — no agent can write outside its steel domain subgraph. A-13 owns the Heat genealogy tree. A-21 owns all CarbonRecord nodes.</div></div></div>
+    <div class="kst-card"><div class="kst-num" style="color:var(--green)">7</div><div class="kst-detail"><div class="kst-label">Graph Hops: Gear → ELV</div><div class="kst-sub">Gear serial → Assembly → MachinedPart → ForgedBlank → BarLot → Billet → Heat → ScrapBundle → ELV VIN — 7 hops traversed in under 50ms</div></div></div>
+    <div class="kst-card"><div class="kst-num" style="color:var(--red)">&lt;50ms</div><div class="kst-detail"><div class="kst-label">Full Traceability Query Time</div><div class="kst-sub">Gear serial → source ELV VINs including full chemistry declaration, tramp element history and carbon calculation — under 50 milliseconds</div></div></div>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 2 -->
+<div class="sec-strip">
+  <div class="ss-num" style="color:var(--amber)">02</div>
+  <div class="ss-title" style="color:var(--amber)">Node Schema — What Lives in the Steel Graph</div>
+  <div class="ss-line"></div>
+  <div class="ss-desc">20 node types, each with typed steel-specific properties — the Heat node is the most data-dense entity, carrying chemistry, energy, tramp elements and full input genealogy</div>
+</div>
+<div class="body">
+<div class="gv-label">▸ MANJU Steel Knowledge Graph — Node Schema &amp; Connectivity Map (ELV → DIA Rolled Bar → Gears, Pinions, Wheel Hubs → New Vehicle)</div>
+<div class="graph-canvas">
+  <svg class="graph-svg" id="connectorSvg">
+    <defs>
+      <marker id="arr-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#E67E22" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="arr-red"    viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#E63946" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="arr-teal"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#028090" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="arr-amber"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#F4A261" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="arr-mint"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#02C39A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="arr-steel"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#7F8C9A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="arr-green"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#48BB78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="arr-gold"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#F1C40F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="arr-blue"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#378ADD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      <marker id="arr-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#9B59B6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    </defs>
+  </svg>
+
+  <div class="graph-layout">
+    <!-- LEFT COLUMN -->
+    <div class="g-col-left">
+      <div class="ng-node nn-orange" id="node-heat">
+        <div class="nn-icon">🔥</div><div class="nn-type">Heat Node</div><div class="nn-name">:Heat</div>
+        <div class="nn-props">
+          <div class="nn-prop">heat_number (primary traceability key)</div>
+          <div class="nn-prop">tap_weight_tonnes, tap_temperature_c</div>
+          <div class="nn-prop">recycled_pct_total, recycled_pct_postconsumer</div>
+          <div class="nn-prop">eaf_energy_kwh, electrode_consumption_kg</div>
+          <div class="nn-prop">steel_grade_aim, production_date</div>
+        </div>
+        <div class="nn-count">Central traceability unit — links all scrap inputs to all downstream products</div>
+      </div>
+      <div class="ng-node nn-red" id="node-regulation">
+        <div class="nn-icon">⚖️</div><div class="nn-type">Regulation Node</div><div class="nn-name">:Regulation</div>
+        <div class="nn-props">
+          <div class="nn-prop">reg_id, framework: ELV|REACH|CSRD|CBAM|ISO14067</div>
+          <div class="nn-prop">threshold_value, threshold_element</div>
+          <div class="nn-prop">enforcement_date, jurisdiction</div>
+          <div class="nn-prop">applies_to: ScrapBundle|Heat|Part|Vehicle</div>
+        </div>
+        <div class="nn-count">ELV Directive · REACH · CSRD · CBAM · IATF 16949</div>
+      </div>
+      <div class="ng-node nn-teal" id="node-facility">
+        <div class="nn-icon">🏭</div><div class="nn-type">Facility Node</div><div class="nn-name">:Facility</div>
+        <div class="nn-props">
+          <div class="nn-prop">facility_id, type: Dismantler|EAF_Mill|Forge|Machining|Assembly</div>
+          <div class="nn-prop">atf_licence_number, iso14001_cert</div>
+          <div class="nn-prop">iatf16949_cert_number, iatf_expiry</div>
+          <div class="nn-prop">eaf_capacity_tonnes_pa, geo_coordinates</div>
+        </div>
+        <div class="nn-count">IATF 16949 automotive quality cert tracked at each tier</div>
+      </div>
+    </div>
+
+    <!-- CENTER COLUMN -->
+    <div class="g-col-center">
+      <div class="gcc-top">
+        <div class="ng-node nn-red sm" id="node-scrap">
+          <div class="nn-icon">🚘</div><div class="nn-type">Scrap Bundle Node</div><div class="nn-name">:ScrapBundle</div>
+          <div class="nn-props">
+            <div class="nn-prop">bundle_id, grade: ShellSteelBales|OtherSteelScrap|PCR|PIR</div>
+            <div class="nn-prop">weight_kg, collection_date</div>
+            <div class="nn-prop">source_elv_vins[], atf_id</div>
+            <div class="nn-prop">declared_cu_pct, declared_sn_pct</div>
+          </div>
+          <div class="nn-count">Root of every steel traceability chain</div>
+        </div>
+        <div class="ng-node nn-amber sm" id="node-billet">
+          <div class="nn-icon">🔩</div><div class="nn-type">Billet &amp; Bar Lot Node</div><div class="nn-name">:Billet / :BarLot</div>
+          <div class="nn-props">
+            <div class="nn-prop">billet_id / bar_lot_id</div>
+            <div class="nn-prop">heat_number (parent), strand_number</div>
+            <div class="nn-prop">length_mm, cross_section_mm</div>
+            <div class="nn-prop">recycled_pct (inherited from Heat)</div>
+            <div class="nn-prop">chemistry_actual{} (from spectrometry)</div>
+          </div>
+          <div class="nn-count">Inherit Heat recycled% and chemistry exactly</div>
+        </div>
+      </div>
+
+      <div class="gcc-mid-l">
+        <div class="ng-node nn-mint sm" id="node-dpp">
+          <div class="nn-icon">📋</div><div class="nn-type">Digital Passport Node</div><div class="nn-name">:DigitalProductPassport</div>
+          <div class="nn-props">
+            <div class="nn-prop">dpp_id, entity_type: Bundle|Heat|Bar|Part|Vehicle</div>
+            <div class="nn-prop">version, status: Draft|Active|Superseded</div>
+            <div class="nn-prop">recycled_pct_total, recycled_pct_postconsumer</div>
+            <div class="nn-prop">pcf_kgco2e (per kg or per part)</div>
+            <div class="nn-prop">heat_number_ref, compliance_status{}</div>
+          </div>
+          <div class="nn-count">Heat number always referenced — the steel audit anchor</div>
+        </div>
+      </div>
+
+      <div class="gcc-mid-c">
+        <div class="kg-core-ring" id="kg-hub">
+          <div class="kg-core-inner">
+            <div class="kc-title">MANJU<br>STEEL<br>GRAPH</div>
+            <div class="kc-sub">Property Graph<br>Engine · Neo4j</div>
+            <div class="kc-stat">20 node types · 46 edge types</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gcc-mid-r">
+        <div class="ng-node nn-steel sm" id="node-steelpart">
+          <div class="nn-icon">⚙️</div><div class="nn-type">Steel Part Node</div><div class="nn-name">:SteelPart</div>
+          <div class="nn-props">
+            <div class="nn-prop">part_serial, part_type: Gear|Pinion|WheelHub</div>
+            <div class="nn-prop">bar_lot_id (parent), heat_number_ref</div>
+            <div class="nn-prop">forging_temp_c, machining_program_id</div>
+            <div class="nn-prop">recycled_pct (inherited from Heat)</div>
+            <div class="nn-prop">pcf_kgco2e (part-level, including processes)</div>
+          </div>
+          <div class="nn-count">Each gear/pinion/hub = one :SteelPart node</div>
+        </div>
+      </div>
+
+      <div class="gcc-bot">
+        <div class="ng-node nn-green sm" id="node-carbon">
+          <div class="nn-icon">🌿</div><div class="nn-type">Carbon Record Node</div><div class="nn-name">:CarbonRecord</div>
+          <div class="nn-props">
+            <div class="nn-prop">methodology: ISO14067, scope: CradleToGate</div>
+            <div class="nn-prop">eaf_energy_kgco2e (dominant — ~70% of Heat PCF)</div>
+            <div class="nn-prop">forging_energy_kgco2e, machining_kgco2e</div>
+            <div class="nn-prop">heat_treatment_kgco2e (case-hardening gears)</div>
+            <div class="nn-prop">eaf_vs_bof_reduction_pct (~75% avoided)</div>
+          </div>
+          <div class="nn-count">Written by A-21 at each phase — Heat, Bar, Part levels</div>
+        </div>
+        <div class="ng-node nn-gold sm" id="node-chemistry">
+          <div class="nn-icon">🧪</div><div class="nn-type">Chemistry Record Node</div><div class="nn-name">:ChemistryRecord</div>
+          <div class="nn-props">
+            <div class="nn-prop">record_id, heat_number_ref</div>
+            <div class="nn-prop">c_pct, mn_pct, si_pct, p_pct, s_pct</div>
+            <div class="nn-prop">cr_pct, ni_pct, mo_pct (alloy elements)</div>
+            <div class="nn-prop">cu_pct, sn_pct, pb_pct, sb_pct (tramp elements)</div>
+            <div class="nn-prop">carbon_equivalent_ce, automotive_limit_met: bool</div>
+          </div>
+          <div class="nn-count">Written by A-07 from spectrometry — linked to every Heat and Part</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="g-col-right">
+      <div class="ng-node nn-blue" id="node-vehicle">
+        <div class="nn-icon">🚗</div><div class="nn-type">Vehicle Node (New)</div><div class="nn-name">:Vehicle (New)</div>
+        <div class="nn-props">
+          <div class="nn-prop">vin, model, model_year, oem_plant</div>
+          <div class="nn-prop">vehicle_recycled_steel_pct (aggregate)</div>
+          <div class="nn-prop">vehicle_pcf_scope3_cat1_kgco2e</div>
+          <div class="nn-prop">elv_directive_compliance_status</div>
+          <div class="nn-prop">csrd_circular_steel_pct</div>
+        </div>
+        <div class="nn-count">Root of forward circular narrative</div>
+      </div>
+      <div class="ng-node nn-purple" id="node-certificate">
+        <div class="nn-icon">🏆</div><div class="nn-type">Certificate Node</div><div class="nn-name">:Certificate</div>
+        <div class="nn-props">
+          <div class="nn-prop">cert_type: ATF|ISO14001|IATF16949|RecycledContent|MTC</div>
+          <div class="nn-prop">issuing_body, cert_number, valid_to</div>
+          <div class="nn-prop">mill_test_cert_ref (steel-specific)</div>
+          <div class="nn-prop">verification_status: APIVerified|SelfDeclared</div>
+          <div class="nn-prop">confidence_score: 0.0–1.0</div>
+        </div>
+        <div class="nn-count">MTC (Mill Test Certificate) is steel-specific cert type</div>
+      </div>
+      <div class="ng-node nn-gold" id="node-agentaction">
+        <div class="nn-icon">🤖</div><div class="nn-type">Agent Action Node</div><div class="nn-name">:AgentAction</div>
+        <div class="nn-props">
+          <div class="nn-prop">agent_id: A-01…A-35, action_type</div>
+          <div class="nn-prop">input_heat_numbers[], output_node_ids[]</div>
+          <div class="nn-prop">reasoning_summary, confidence</div>
+          <div class="nn-prop">sha256_hash (cryptographic proof)</div>
+          <div class="nn-prop">human_approved: bool — metallurgist_id for Heat gates</div>
+        </div>
+        <div class="nn-count">Written by A-03 — every action immutably logged</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 3 -->
+<div class="sec-strip">
+  <div class="ss-num" style="color:var(--teal)">03</div>
+  <div class="ss-title" style="color:var(--teal)">Seven Semantic Layers of the Steel Graph</div>
+  <div class="ss-line"></div>
+  <div class="ss-desc">The steel graph has the same 7-layer architecture as the PP graph but with steel-specific node types and data — most notably the Chemistry &amp; Tramp Element layer which has no equivalent in plastics</div>
+</div>
+<div class="body">
+<div class="layers-row">
+  <div class="layer-card lc-orange">
+    <div class="layer-num">Layer 1</div><div class="layer-name">Physical Steel Flow Layer</div>
+    <div class="layer-desc">The physical ground truth of every tonne of steel in the system — from scrap bundle to EAF Heat, billet, bar, forging and machined part. The Heat node is the transformation pivot: inputs merge into liquid steel; outputs are solid billets with a new identity but inherited genealogy.</div>
+    <div class="layer-items"><span class="li-chip">:ScrapBundle</span><span class="li-chip">:Heat</span><span class="li-chip">:Billet</span><span class="li-chip">:BarLot</span><span class="li-chip">:ForgedBlank</span><span class="li-chip">:MachinedPart</span><span class="li-chip">:AssemblyUnit</span><span class="li-chip">:MELTED_INTO edges</span><span class="li-chip">:CAST_INTO edges</span><span class="li-chip">:ROLLED_INTO edges</span><span class="li-chip">tap_weight_tonnes</span></div>
+  </div>
+  <div class="layer-card lc-teal">
+    <div class="layer-num">Layer 2</div><div class="layer-name">Provenance &amp; Custody Layer</div>
+    <div class="layer-desc">Legal and physical chain of custody for steel scrap and products across the 5-tier manufacturing chain. Mass balance validation at every transfer — from scrap delivery to the EAF gate, through each tier handoff to the OEM assembly line. ATF and IATF 16949 certifications checked at each processing event.</div>
+    <div class="layer-items"><span class="li-chip">:CustodyTransfer nodes</span><span class="li-chip">:Organisation nodes</span><span class="li-chip">:OWNED_BY edges</span><span class="li-chip">:DELIVERED_TO edges</span><span class="li-chip">mass_balance_tonnes</span><span class="li-chip">atf_validated: bool</span><span class="li-chip">iatf_valid: bool</span><span class="li-chip">radiation_screened: bool</span></div>
+  </div>
+  <div class="layer-card lc-amber">
+    <div class="layer-num">Layer 3</div><div class="layer-name">Chemistry &amp; Tramp Element Layer</div>
+    <div class="layer-desc"><strong style="color:var(--amber)">Unique to steel — no equivalent in the PP graph.</strong> Every Heat node has a linked :ChemistryRecord storing the full spectrometry analysis. The tramp element sub-layer (Cu, Sn, Pb, Sb) tracks concentrations across successive Heats from each scrap supplier, enabling the cross-generational accumulation analysis that is critical for automotive steel quality assurance.</div>
+    <div class="layer-items"><span class="li-chip">:ChemistryRecord nodes</span><span class="li-chip">:TrampElementLog nodes</span><span class="li-chip">:HAS_CHEMISTRY edges</span><span class="li-chip">:EXCEEDS_LIMIT edges</span><span class="li-chip">cu_pct, sn_pct, pb_pct, sb_pct</span><span class="li-chip">carbon_equivalent_ce</span><span class="li-chip">automotive_limit_met: bool</span></div>
+  </div>
+  <div class="layer-card lc-steel">
+    <div class="layer-num">Layer 4</div><div class="layer-name">Compliance &amp; Regulatory Layer</div>
+    <div class="layer-desc">Links every scrap bundle, Heat and part to the regulations it must comply with. When a regulation changes, traversal from the :Regulation node finds every affected :Heat or :Part instantly. The CBAM regulation is uniquely present here — linking imported pig iron and DRI inputs to their declared embedded carbon costs.</div>
+    <div class="layer-items"><span class="li-chip">:Regulation nodes</span><span class="li-chip">:ComplianceRecord nodes</span><span class="li-chip">:COMPLIES_WITH edges</span><span class="li-chip">:VIOLATES edges</span><span class="li-chip">cbam_certificate_ref</span><span class="li-chip">filing_id</span><span class="li-chip">deadline_date</span></div>
+  </div>
+</div>
+<div class="layers-row">
+  <div class="layer-card" style="border-left:3px solid var(--green)">
+    <div class="layer-num" style="color:var(--green)">Layer 5</div><div class="layer-name">Carbon Footprint Layer</div>
+    <div class="layer-desc">Every Heat, bar lot and steel part carries a linked :CarbonRecord documenting its ISO 14067 PCF. For steel, EAF electricity consumption is the dominant variable (~70% of total Heat PCF). The layer stores the critical EAF vs BOF comparison: ~0.52 kg CO₂e/kg (EAF, 88% recycled) vs ~2.05 kg CO₂e/kg (BOF, virgin) — the 75% carbon reduction claim evidenced per Heat.</div>
+    <div class="layer-items"><span class="li-chip">:CarbonRecord nodes</span><span class="li-chip">:HAS_CARBON_FOOTPRINT edges</span><span class="li-chip">eaf_energy_kgco2e</span><span class="li-chip">forging_energy_kgco2e</span><span class="li-chip">heat_treatment_kgco2e</span><span class="li-chip">eaf_vs_bof_reduction_pct</span></div>
+  </div>
+  <div class="layer-card" style="border-left:3px solid var(--mint)">
+    <div class="layer-num" style="color:var(--mint)">Layer 6</div><div class="layer-name">Digital Passport Layer</div>
+    <div class="layer-desc">The official output layer — every :DigitalProductPassport node aggregates data from the five layers below it and always carries a reference to the originating Heat number. The Mill Test Certificate (MTC) is the steel-specific document type that serves as the DPP for bar lots delivered to Tier 3 forge shops.</div>
+    <div class="layer-items"><span class="li-chip">:DigitalProductPassport nodes</span><span class="li-chip">:HAS_PASSPORT edges</span><span class="li-chip">:SUPERSEDES edges</span><span class="li-chip">heat_number_ref (always)</span><span class="li-chip">mtc_reference (for bar lots)</span><span class="li-chip">version: int</span><span class="li-chip">ppap_ref (Tier 1 → OEM)</span></div>
+  </div>
+  <div class="layer-card" style="border-left:3px solid var(--gold)">
+    <div class="layer-num" style="color:var(--gold)">Layer 7</div><div class="layer-name">Agent Audit Layer</div>
+    <div class="layer-desc">Provenance-of-the-provenance for steel. Every node created by an agent — including the metallurgist's Heat approval gate record — is linked to the :AgentAction that created it. The metallurgist's human approval of Heat chemistry is permanently embedded in the graph with approver identity, timestamp and the specific chemistry values approved.</div>
+    <div class="layer-items"><span class="li-chip">:AgentAction nodes</span><span class="li-chip">:CREATED_BY edges</span><span class="li-chip">:METALLURGIST_APPROVED edges</span><span class="li-chip">metallurgist_id</span><span class="li-chip">chemistry_approved_values{}</span><span class="li-chip">sha256_hash</span></div>
+  </div>
+  <div class="layer-card" style="border-left:3px solid var(--red)">
+    <div class="layer-num" style="color:var(--red)">Cross-Layer</div><div class="layer-name">5-Tier Supply Network Layer</div>
+    <div class="layer-desc">Maps the 5-tier supply network — ELV Dismantlers → EAF Recycler → Tier 3 Forge → Tier 2 Machining → Tier 1 Assembly → OEM — including the shared Tier 2 supplier risk pattern where the same machining facility serves multiple Tier 1 plants, creating a hidden OEM concentration risk.</div>
+    <div class="layer-items"><span class="li-chip">:Organisation nodes</span><span class="li-chip">:SUPPLIES_TO edges</span><span class="li-chip">:IATF_CERTIFIED_BY edges</span><span class="li-chip">tier_number: 1–5</span><span class="li-chip">concentration_pct</span><span class="li-chip">eaf_capacity_utilisation</span></div>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 4 -->
+<div class="sec-strip">
+  <div class="ss-num" style="color:var(--blue)">04</div>
+  <div class="ss-title" style="color:var(--blue)">Key Steel Relationships — The Edges That Define the Chain</div>
+  <div class="ss-line"></div>
+  <div class="ss-desc">46 relationship types — the steel chain has unique edge types not present in the PP graph: MELTED_INTO, HAS_CHEMISTRY, HAS_TRAMP_ELEMENT_LOG, METALLURGIST_APPROVED</div>
+</div>
+<div class="body">
+<div class="rel-grid">
+  <div class="rel-card">
+    <div class="rel-header"><span class="rel-from" style="background:rgba(230,57,70,.15);color:var(--red)">:ScrapBundle</span><span class="rel-arrow">─</span><span class="rel-verb">MELTED_INTO</span><span class="rel-arrow">→</span><span class="rel-to" style="background:rgba(231,126,34,.15);color:var(--orange)">:Heat</span></div>
+    <div class="rel-props">
+      <div class="rel-prop">fraction_pct: float — % of Heat charge from this bundle</div>
+      <div class="rel-prop">input_weight_tonnes: float — actual tonnes from this source</div>
+      <div class="rel-prop">scrap_grade: ShellSteelBales|OtherSteelScrap|PCR|PIR|PigIron|DRI</div>
+      <div class="rel-prop">anti_double_count_lock_id: uuid — prevents same scrap claimed twice</div>
+      <div class="rel-prop">written_by: Agent A-13 (Batch Tracking) at Heat assembly</div>
+    </div>
+  </div>
+  <div class="rel-card">
+    <div class="rel-header"><span class="rel-from" style="background:rgba(231,126,34,.15);color:var(--orange)">:Heat</span><span class="rel-arrow">─</span><span class="rel-verb">HAS_CHEMISTRY</span><span class="rel-arrow">→</span><span class="rel-to" style="background:rgba(241,196,15,.12);color:var(--gold)">:ChemistryRecord</span></div>
+    <div class="rel-props">
+      <div class="rel-prop">sample_type: LadleSample|TundishSample|FinalProduct</div>
+      <div class="rel-prop">sampled_at: datetime, spectrometer_id</div>
+      <div class="rel-prop">carbon_equivalent_ce: float (automotive quality gate)</div>
+      <div class="rel-prop">cu_pct: float — tramp element level critical for gears</div>
+      <div class="rel-prop">written_by: Agent A-07 from spectrometry instrument API</div>
+    </div>
+  </div>
+  <div class="rel-card">
+    <div class="rel-header"><span class="rel-from" style="background:rgba(231,126,34,.15);color:var(--orange)">:Heat</span><span class="rel-arrow">─</span><span class="rel-verb">METALLURGIST_APPROVED</span><span class="rel-arrow">→</span><span class="rel-to" style="background:rgba(241,196,15,.12);color:var(--gold)">:AgentAction</span></div>
+    <div class="rel-props">
+      <div class="rel-prop">metallurgist_id: string — responsible approver identity</div>
+      <div class="rel-prop">approved_at: datetime, chemistry_aim_met: bool</div>
+      <div class="rel-prop">alloy_additions_approved{}: elements and kg added</div>
+      <div class="rel-prop">tap_authorised: bool — release gate for continuous casting</div>
+      <div class="rel-prop">written_by: Agent A-02 (Workflow Coordinator) — human gate record</div>
+    </div>
+  </div>
+  <div class="rel-card">
+    <div class="rel-header"><span class="rel-from" style="background:rgba(231,126,34,.15);color:var(--orange)">:Heat</span><span class="rel-arrow">─</span><span class="rel-verb">CAST_INTO</span><span class="rel-arrow">→</span><span class="rel-to" style="background:rgba(244,162,97,.15);color:var(--amber)">:Billet</span></div>
+    <div class="rel-props">
+      <div class="rel-prop">strand_number: int — which caster strand produced this billet</div>
+      <div class="rel-prop">billet_sequence_number: int (position in cast sequence)</div>
+      <div class="rel-prop">casting_speed_m_min: float, meniscus_temp_c: float</div>
+      <div class="rel-prop">recycled_pct: float — inherited exactly from parent Heat</div>
+      <div class="rel-prop">written_by: Agent A-10 (Material Passport) on casting completion</div>
+    </div>
+  </div>
+  <div class="rel-card">
+    <div class="rel-header"><span class="rel-from" style="background:rgba(244,162,97,.15);color:var(--amber)">:BarLot</span><span class="rel-arrow">─</span><span class="rel-verb">FORGED_INTO</span><span class="rel-arrow">→</span><span class="rel-to" style="background:rgba(127,140,154,.15);color:var(--steel)">:SteelPart</span></div>
+    <div class="rel-props">
+      <div class="rel-prop">forging_heat_number: int (not to be confused with EAF Heat)</div>
+      <div class="rel-prop">forging_temperature_c: float, press_force_tonnes: float</div>
+      <div class="rel-prop">blanks_cut_from_bar: int — how many blanks from this bar</div>
+      <div class="rel-prop">forging_energy_kwh_per_part: float → carbon calc input</div>
+      <div class="rel-prop">written_by: Agent A-10 at Tier 3 (forging passports)</div>
+    </div>
+  </div>
+  <div class="rel-card">
+    <div class="rel-header"><span class="rel-from" style="background:rgba(127,140,154,.15);color:var(--steel)">:SteelPart</span><span class="rel-arrow">─</span><span class="rel-verb">ASSEMBLED_INTO</span><span class="rel-arrow">→</span><span class="rel-to" style="background:rgba(55,138,221,.12);color:var(--blue)">:Vehicle</span></div>
+    <div class="rel-props">
+      <div class="rel-prop">position: Gearbox|FrontHub|RearHub|Pinion_DriveShaft</div>
+      <div class="rel-prop">part_weight_kg: float — contributes to vehicle steel mass</div>
+      <div class="rel-prop">recycled_steel_contribution_pct: float</div>
+      <div class="rel-prop">scope3_co2e_contribution: float — to vehicle carbon total</div>
+      <div class="rel-prop">written_by: Agent A-10 at OEM assembly confirmation</div>
+    </div>
+  </div>
+  <div class="rel-card">
+    <div class="rel-header"><span class="rel-from" style="background:rgba(230,57,70,.15);color:var(--red)">:ScrapBundle</span><span class="rel-arrow">─</span><span class="rel-verb">ORIGINATES_FROM_ELV</span><span class="rel-arrow">→</span><span class="rel-to" style="background:rgba(230,57,70,.15);color:var(--red)">:Vehicle (ELV)</span></div>
+    <div class="rel-props">
+      <div class="rel-prop">elv_vin: string — source vehicle identity</div>
+      <div class="rel-prop">steel_component_type: BodyShell|Drivetrain|Chassis</div>
+      <div class="rel-prop">dismantling_date, atf_id, cod_reference</div>
+      <div class="rel-prop">grade_at_dismantling: ShellSteelBales|OtherSteelScrap</div>
+      <div class="rel-prop">written_by: Agent A-11 (Chain of Custody)</div>
+    </div>
+  </div>
+  <div class="rel-card">
+    <div class="rel-header"><span class="rel-from" style="background:rgba(72,187,120,.12);color:var(--green)">:Heat|Part</span><span class="rel-arrow">─</span><span class="rel-verb">HAS_CARBON_FOOTPRINT</span><span class="rel-arrow">→</span><span class="rel-to" style="background:rgba(72,187,120,.12);color:var(--green)">:CarbonRecord</span></div>
+    <div class="rel-props">
+      <div class="rel-prop">pcf_kgco2e: float — per kg steel or per part</div>
+      <div class="rel-prop">methodology: ISO14067, boundary: CradleToGate</div>
+      <div class="rel-prop">eaf_vs_bof_reduction_pct: float (~75% at 88% recycled)</div>
+      <div class="rel-prop">grid_emission_factor_used, eaf_kwh_per_tonne</div>
+      <div class="rel-prop">written_by: Agent A-21 (Carbon Footprint)</div>
+    </div>
+  </div>
+  <div class="rel-card">
+    <div class="rel-header"><span class="rel-from" style="background:rgba(231,126,34,.15);color:var(--orange)">:Heat|Billet|BarLot</span><span class="rel-arrow">─</span><span class="rel-verb">HAS_TRAMP_LOG</span><span class="rel-arrow">→</span><span class="rel-to" style="background:rgba(241,196,15,.12);color:var(--gold)">:TrampElementLog</span></div>
+    <div class="rel-props">
+      <div class="rel-prop">cu_pct, sn_pct, pb_pct, sb_pct — the 4 critical tramp elements</div>
+      <div class="rel-prop">cu_automotive_limit: 0.08% — exceeded: bool</div>
+      <div class="rel-prop">cu_trend_slope: float — rising/falling vs prior 20 Heats</div>
+      <div class="rel-prop">dilution_recommendation: add N tonnes pig iron to reduce Cu to X%</div>
+      <div class="rel-prop">written_by: Agents A-14 and A-33 jointly — detection + trending</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 5 -->
+<div class="sec-strip">
+  <div class="ss-num" style="color:var(--purple)">05</div>
+  <div class="ss-title" style="color:var(--purple)">How All 35 Agents Interact With the Steel Graph</div>
+  <div class="ss-line"></div>
+  <div class="ss-desc">Each cluster's specific READ and WRITE access to the steel subgraph — enforced by role-based Cypher grants. Note A-13's ownership of the Heat genealogy tree and A-21's ownership of all CarbonRecord nodes</div>
+</div>
+<div class="body">
+<div class="agent-lanes">
+  <div class="al-cluster al-mint">
+    <div class="al-c-label">C1 · Orchestration</div>
+    <div class="al-c-name">A-01 Master Orchestrator<br>A-02 Workflow Coordinator<br>A-03 Audit Trail</div>
+    <div class="al-rw-title">WRITES →</div>
+    <div class="al-writes">
+      <div class="al-write">:Workflow nodes per ELV/Heat event</div>
+      <div class="al-write">:AgentAction wrapping all mutations</div>
+      <div class="al-write">Heat tap authorisation gate records</div>
+      <div class="al-write">:AuditLog nodes (write-once storage)</div>
+      <div class="al-write">Metallurgist approval gate records</div>
+    </div>
+    <div class="al-rw-title">READS ←</div>
+    <div class="al-reads">
+      <div class="al-read">All nodes for task routing decisions</div>
+      <div class="al-read">:ComplianceRecord for SLA monitoring</div>
+      <div class="al-read">Heat approval status for cascade trigger</div>
+    </div>
+  </div>
+  <div class="al-cluster al-teal">
+    <div class="al-c-label">C2 · Data Ingestion</div>
+    <div class="al-c-name">A-04 Doc Extraction<br>A-05 ERP Integration<br>A-06 IoT Data<br>A-07 Quality<br>A-08 Reconciliation<br>A-09 3rd Party Data</div>
+    <div class="al-rw-title">WRITES →</div>
+    <div class="al-writes">
+      <div class="al-write">:ScrapBundle nodes on bundle creation</div>
+      <div class="al-write">:ChemistryRecord from spectrometer API</div>
+      <div class="al-write">EAF kWh per Heat from power meters</div>
+      <div class="al-write">:CustodyTransfer events from weighbridge</div>
+      <div class="al-write">:Certificate validity from issuer APIs</div>
+    </div>
+    <div class="al-rw-title">READS ←</div>
+    <div class="al-reads">
+      <div class="al-read">Existing :ScrapBundle for dedup</div>
+      <div class="al-read">:Certificate for IATF validation</div>
+    </div>
+  </div>
+  <div class="al-cluster al-blue">
+    <div class="al-c-label">C3 · Traceability</div>
+    <div class="al-c-name">A-10 Material Passport<br>A-11 Chain of Custody<br>A-12 Provenance Verify<br>A-13 Batch Tracking<br>A-14 Hazardous Sub<br>A-15 Recycled Content</div>
+    <div class="al-rw-title">WRITES →</div>
+    <div class="al-writes">
+      <div class="al-write">:DigitalProductPassport (all levels)</div>
+      <div class="al-write">:MELTED_INTO edges — Heat genealogy tree</div>
+      <div class="al-write">:CAST_INTO :ROLLED_INTO cascade edges</div>
+      <div class="al-write">:TrampElementLog on every Heat</div>
+      <div class="al-write">recycled_pct on all downstream nodes</div>
+      <div class="al-write">anti_double_count_lock_id on scrap edges</div>
+    </div>
+    <div class="al-rw-title">READS ←</div>
+    <div class="al-reads">
+      <div class="al-read">Full :MELTED_INTO chains for genealogy</div>
+      <div class="al-read">:ChemistryRecord for substance calc</div>
+    </div>
+  </div>
+  <div class="al-cluster al-amber">
+    <div class="al-c-label">C4 · Compliance</div>
+    <div class="al-c-name">A-16 Reg Monitoring<br>A-17 EU Battery Reg<br>A-18 ELV Directive<br>A-19 CSRD<br>A-20 REACH/SCIP<br>A-21 Carbon PCF<br>A-22 Conflict Minerals</div>
+    <div class="al-rw-title">WRITES →</div>
+    <div class="al-writes">
+      <div class="al-write">:COMPLIES_WITH edges per regulation</div>
+      <div class="al-write">:CarbonRecord per Heat, Bar and Part</div>
+      <div class="al-write">:VIOLATES edges for tramp exceedances</div>
+      <div class="al-write">CBAM certificate references on virgin inputs</div>
+      <div class="al-write">pcf_kgco2e on :Heat, :BarLot, :SteelPart</div>
+    </div>
+    <div class="al-rw-title">READS ←</div>
+    <div class="al-reads">
+      <div class="al-read">:ChemistryRecord for REACH checks</div>
+      <div class="al-read">All :CarbonRecord for CSRD aggregation</div>
+    </div>
+  </div>
+  <div class="al-cluster al-green">
+    <div class="al-c-label">C5 · Supply Intel</div>
+    <div class="al-c-name">A-23 Supplier Risk<br>A-24 Onboarding<br>A-25 Chain Mapping<br>A-26 Tier Mapping<br>A-27 Demand Forecast</div>
+    <div class="al-rw-title">WRITES →</div>
+    <div class="al-writes">
+      <div class="al-write">risk_score on :Organisation nodes</div>
+      <div class="al-write">:SUPPLIES_TO edges (5-tier network)</div>
+      <div class="al-write">:SHARES_MACHINING_WITH inferred edges</div>
+      <div class="al-write">:SteelForecast nodes (5yr horizon)</div>
+      <div class="al-write">eaf_outage_risk on :Facility nodes</div>
+    </div>
+    <div class="al-rw-title">READS ←</div>
+    <div class="al-reads">
+      <div class="al-read">:CustodyTransfer for tier mapping</div>
+      <div class="al-read">:Certificate iatf_expiry for risk score</div>
+    </div>
+  </div>
+  <div class="al-cluster al-red">
+    <div class="al-c-label">C6 · Circular Ops</div>
+    <div class="al-c-name">A-28 EoL Planning<br>A-29 Recovery Optim<br>A-30 Design 4 Disassembly<br>A-31 Opportunity Match<br>A-32 ESG Scoring</div>
+    <div class="al-rw-title">WRITES →</div>
+    <div class="al-writes">
+      <div class="al-write">:EoLPathwayRec per steel component</div>
+      <div class="al-write">:HeatChargeOptimisation records</div>
+      <div class="al-write">dfr_score on :SteelPart, :Vehicle nodes</div>
+      <div class="al-write">esg_score on :Organisation nodes</div>
+      <div class="al-write">:CircularMatch edges for surplus bars</div>
+    </div>
+    <div class="al-rw-title">READS ←</div>
+    <div class="al-reads">
+      <div class="al-read">:ScrapBundle inventory for charge mix</div>
+      <div class="al-read">:ChemistryRecord for tramp dilution calc</div>
+    </div>
+  </div>
+  <div class="al-cluster al-purple">
+    <div class="al-c-label">C7 · Intelligence</div>
+    <div class="al-c-name">A-33 Anomaly Detection<br>A-34 Predictive Analytics<br>A-35 Stakeholder Comms</div>
+    <div class="al-rw-title">WRITES →</div>
+    <div class="al-writes">
+      <div class="al-write">:AnomalyFlag with Cu trend evidence</div>
+      <div class="al-write">:PredictionRecord per chemistry model</div>
+      <div class="al-write">:MTC dispatch notifications per Heat</div>
+      <div class="al-write">anomaly_flag: bool on :ChemistryRecord</div>
+    </div>
+    <div class="al-rw-title">READS ←</div>
+    <div class="al-reads">
+      <div class="al-read">All :ChemistryRecord for tramp trends</div>
+      <div class="al-read">Full :Heat history for learning models</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 6 -->
+<div class="sec-strip">
+  <div class="ss-num" style="color:var(--green)">06</div>
+  <div class="ss-title" style="color:var(--green)">Steel-Specific Graph Queries — Questions Only Possible With Connected Data</div>
+  <div class="ss-line"></div>
+  <div class="ss-desc">Six Cypher queries that demonstrate the unique intelligence the steel graph enables — from tramp element trend detection to 7-hop ELV traceability</div>
+</div>
+<div class="body">
+<div class="query-grid">
+  <div class="query-card">
+    <div class="qc-tag" style="color:var(--orange)">Traceability · 7-Hop Reverse</div>
+    <div class="qc-question">"Which ELV vehicles contributed steel to gear serial #GR-88421 and what was the Cu level in the Heat?"</div>
+    <div class="qc-cypher">MATCH (v:Vehicle)-[:ASSEMBLED_WITH]->(p:SteelPart {serial:'GR-88421'})<br>-[:MACHINED_FROM]->(f:ForgedBlank)<br>-[:FORGED_FROM]->(b:BarLot)<br>-[:ROLLED_FROM]->(bil:Billet)<br>-[:CAST_FROM]->(h:Heat)<br>-[:MELTED_INTO {source:'scrap'}]->(s:ScrapBundle)<br>-[:ORIGINATES_FROM_ELV]->(elv:Vehicle)<br>MATCH (h)-[:HAS_CHEMISTRY]->(chem:ChemistryRecord)<br>RETURN elv.vin, s.grade, h.heat_number,<br>chem.cu_pct, s.weight_tonnes</div>
+    <div class="qc-result">Returns: <span class="qc-highlight">All source ELV VINs and scrap grades</span> contributing steel to gear GR-88421, with the Cu concentration in the Heat. 7 graph hops in <span class="qc-highlight">&lt;50ms</span>. Would require 14+ table joins in SQL.</div>
+  </div>
+  <div class="query-card">
+    <div class="qc-tag" style="color:var(--red)">Anomaly · Tramp Accumulation</div>
+    <div class="qc-question">"Is the Cu level in Heats from scrap supplier ORG-042 trending upward and when will it breach the 0.08% automotive limit?"</div>
+    <div class="qc-cypher">MATCH (org:Organisation {org_id:'ORG-042'})<br>-[:SUPPLIED]->(s:ScrapBundle)<br>-[:MELTED_INTO]->(h:Heat)<br>-[:HAS_CHEMISTRY]->(chem:ChemistryRecord)<br>WHERE h.production_date &gt; datetime() - duration('P6M')<br>WITH org, h.production_date as dt,<br>chem.cu_pct as cu ORDER BY dt<br>WITH collect(cu) as cu_series,<br>collect(dt) as dates<br>RETURN cu_series, dates,<br>(cu_series[-1]-cu_series[0])/size(cu_series) as trend_pct_per_heat</div>
+    <div class="qc-result">Returns: <span class="qc-highlight">Cu time-series per supplier</span> with trend slope. If trend_pct_per_heat = +0.003%, Agent A-33 projects breach in N Heats and alerts procurement — <span class="qc-highlight">before</span> the automotive limit is actually crossed.</div>
+  </div>
+  <div class="query-card">
+    <div class="qc-tag" style="color:var(--green)">Carbon · PCF Full Stack</div>
+    <div class="qc-question">"What is the complete ISO 14067 cradle-to-gate carbon footprint of wheel hub WH-2291 on Vehicle VIN DE-X99841?"</div>
+    <div class="qc-cypher">MATCH (v:Vehicle {vin:'DE-X99841'})<br>-[:ASSEMBLED_WITH {position:'FrontHub'}]->(p:SteelPart)<br>-[:HAS_CARBON_FOOTPRINT]->(ppcf:CarbonRecord)<br>MATCH (p)-[:MACHINED_FROM*1..3]->(b:BarLot)<br>-[:HAS_CARBON_FOOTPRINT]->(bpcf:CarbonRecord)<br>MATCH (b)-[:ROLLED_FROM]->(bil:Billet)<br>-[:CAST_FROM]->(h:Heat)<br>-[:HAS_CARBON_FOOTPRINT]->(hpcf:CarbonRecord)<br>RETURN p.part_serial, ppcf.pcf_kgco2e,<br>hpcf.eaf_energy_kgco2e,<br>hpcf.eaf_vs_bof_reduction_pct</div>
+    <div class="qc-result">Returns: <span class="qc-highlight">Part-level PCF with upstream breakdown</span> — EAF energy (dominant), forging, machining, heat treatment. Shows <span class="qc-highlight">~75% carbon reduction</span> vs BOF virgin steel. ISO 14067 compliant, audit-ready for CSRD.</div>
+  </div>
+  <div class="query-card">
+    <div class="qc-tag" style="color:var(--teal)">Recycled Content · Heat Certification</div>
+    <div class="qc-question">"What is the verified recycled content of Heat STEEL-2024-088 and is there any double-counting risk across concurrent Heats?"</div>
+    <div class="qc-cypher">MATCH (h:Heat {heat_number:'STEEL-2024-088'})<br>-[m:MELTED_INTO]->(s:ScrapBundle)<br>WHERE s.grade IN ['ShellSteelBales','OtherSteelScrap','PCR','PIR']<br>WITH h, sum(m.fraction_pct) as recycled_pct,<br>collect({bundle:s.bundle_id, lock:m.anti_double_count_lock_id}) as locks<br>MATCH (h2:Heat)-[m2:MELTED_INTO]->(s)<br>WHERE h2.heat_number &lt;&gt; h.heat_number<br>AND h2.production_date &gt; datetime()-duration('P7D')<br>RETURN recycled_pct,<br>[l IN locks WHERE l.lock IS NULL] as unlocked_risk</div>
+    <div class="qc-result">Returns: <span class="qc-highlight">88% verified recycled content</span> with lock IDs on all claimed scrap fractions. Checks prior 7 days for concurrent Heats claiming the same scrap — <span class="qc-highlight">anti-double-counting</span> enforced by Agent A-15.</div>
+  </div>
+  <div class="query-card">
+    <div class="qc-tag" style="color:var(--purple)">Supply Risk · IATF Expiry</div>
+    <div class="qc-question">"Which Tier 3 forge shops in the OEM's steel supply chain have IATF 16949 certifications expiring in the next 6 months?"</div>
+    <div class="qc-cypher">MATCH (oem:Organisation {role:'OEM'})<br>&lt;-[:SUPPLIES_TO*1..4]-(t3:Organisation {role:'Tier3_Forge'})<br>-[:IATF_CERTIFIED_BY]->(cert:Certificate {cert_type:'IATF16949'})<br>WHERE cert.valid_to &lt; datetime() + duration('P6M')<br>AND cert.valid_to &gt; datetime()<br>RETURN t3.name, t3.org_id, cert.valid_to,<br>duration.between(datetime(),cert.valid_to).months as months_remaining<br>ORDER BY cert.valid_to ASC</div>
+    <div class="qc-result">Returns: <span class="qc-highlight">Ranked IATF 16949 expiry risk</span> for all Tier 3 forge shops in the OEM's steel chain. Agent A-23 uses this query monthly — lapse means OEM must halt purchasing from that forge shop immediately.</div>
+  </div>
+  <div class="query-card">
+    <div class="qc-tag" style="color:var(--steel)">Chemistry · Forge Quality Prediction</div>
+    <div class="qc-question">"Which bar lots currently in the Tier 3 forge shop queue have chemistry or CE values that predict elevated surface crack risk in gear production?"</div>
+    <div class="qc-cypher">MATCH (b:BarLot {status:'InForgeQueue'})<br>-[:ROLLED_FROM]->(bil:Billet)<br>-[:CAST_FROM]->(h:Heat)<br>-[:HAS_CHEMISTRY]->(chem:ChemistryRecord)<br>WHERE chem.carbon_equivalent_ce &gt; 0.52<br>OR chem.cu_pct &gt; 0.075<br>WITH b, chem,<br>CASE WHEN chem.carbon_equivalent_ce &gt; 0.52<br>     AND chem.cu_pct &gt; 0.075<br>     THEN 'HIGH' ELSE 'MEDIUM' END as risk_level<br>RETURN b.bar_lot_id, chem.carbon_equivalent_ce,<br>chem.cu_pct, risk_level<br>ORDER BY risk_level DESC</div>
+    <div class="qc-result">Returns: <span class="qc-highlight">Ranked forge queue risk list</span>. Agent A-34 uses this pre-production to alert the forge shop — HIGH risk lots (CE &gt;0.52 AND Cu &gt;0.075%) have <span class="qc-highlight">3.2× higher surface crack rate</span> if forging temperature drops below 1150°C.</div>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 7 -->
+<div class="sec-strip">
+  <div class="ss-num" style="color:var(--amber)">07</div>
+  <div class="ss-title" style="color:var(--amber)">Steel Graph Storage Architecture — Four Complementary Stores</div>
+  <div class="ss-line"></div>
+  <div class="ss-desc">The same 4-store architecture as the PP graph — but with steel-specific data volumes, retention requirements and real-time needs driven by EAF process control</div>
+</div>
+<div class="body">
+<div class="storage-row">
+  <div class="stor-card" style="border-top:3px solid var(--orange)">
+    <div class="stor-icon">🌐</div>
+    <div class="stor-name">Property Graph Database</div>
+    <div class="stor-type" style="color:var(--orange)">Neo4j Enterprise · Primary Steel Query Engine</div>
+    <div class="stor-desc">Primary operational store for all steel traversal queries — Heat genealogy tracing, tramp element accumulation analysis, IATF 16949 certification status checks and passport assembly. The Heat-to-gear 7-hop traversal executes in under 50ms via indexed heat_number properties and optimised relationship indexes on :MELTED_INTO and :CAST_INTO.</div>
+    <div class="stor-specs">
+      <div class="stor-spec"><span class="stor-spec-k">Indexes:</span> heat_number (primary key), bar_lot_id, part_serial, vin — all B-tree indexed</div>
+      <div class="stor-spec"><span class="stor-spec-k">Key index:</span> Composite (cu_pct, production_date) on :ChemistryRecord — enables tramp trend queries</div>
+      <div class="stor-spec"><span class="stor-spec-k">Replication:</span> Multi-region causal cluster — EU-West primary, EU-Central replica</div>
+      <div class="stor-spec"><span class="stor-spec-k">Access:</span> Role-based Cypher grants per agent cluster — A-13 owns Heat genealogy writes exclusively</div>
+      <div class="stor-spec"><span class="stor-spec-k">Special:</span> :TrampElementLog nodes are indexed by (supplier_id, production_date) for trend queries</div>
+    </div>
+  </div>
+  <div class="stor-card" style="border-top:3px solid var(--teal)">
+    <div class="stor-icon">📊</div>
+    <div class="stor-name">Analytical Data Warehouse</div>
+    <div class="stor-type" style="color:var(--teal)">Snowflake · Steel Analytics &amp; CSRD</div>
+    <div class="stor-desc">Handles bulk aggregations not suited to the graph — per-Heat carbon intensity trends across thousands of Heats, recycled content percentages by steel grade over time, CSRD disclosure calculations, and the EU CBAM embedded carbon calculations for imported iron inputs. Syncs from Neo4j every 15 minutes via Change Data Capture.</div>
+    <div class="stor-specs">
+      <div class="stor-spec"><span class="stor-spec-k">Key tables:</span> fact_heat (per-Heat recycled%, PCF, chemistry), fact_part_pcf, dim_organisation, dim_regulation</div>
+      <div class="stor-spec"><span class="stor-spec-k">Used by:</span> A-19 (CSRD), A-21 (Carbon), A-32 (ESG), A-34 (Predictive Analytics — chemistry ML models)</div>
+      <div class="stor-spec"><span class="stor-spec-k">CBAM table:</span> imported_iron_embedded_carbon — carbon intensity per supplier per lot for CBAM filing</div>
+      <div class="stor-spec"><span class="stor-spec-k">Retention:</span> Full historical with time-travel — Heat records retained 10+ years for warranty traceability</div>
+    </div>
+  </div>
+  <div class="stor-card" style="border-top:3px solid var(--amber)">
+    <div class="stor-icon">⚡</div>
+    <div class="stor-name">Event Stream</div>
+    <div class="stor-type" style="color:var(--amber)">Apache Kafka · Real-Time Steel Process Bus</div>
+    <div class="stor-desc">The real-time nervous system for steel process events. EAF furnace PLCs emit power readings every second — these go through Kafka before hitting the graph, enabling edge processing and pre-aggregation. The mill test certificate dispatch topic triggers the Stakeholder Communication Agent to send chemistry confirmations to all Tier 3 customers within 2 hours of tapping.</div>
+    <div class="stor-specs">
+      <div class="stor-spec"><span class="stor-spec-k">Topics:</span> eaf.power.readings, spectrometry.results, heat.approved, mtc.dispatched, custody.transfer, compliance.alerts</div>
+      <div class="stor-spec"><span class="stor-spec-k">Critical path:</span> spectrometry.results → graph write → mtc.dispatched → Tier 3 notification ≤ 2 hours</div>
+      <div class="stor-spec"><span class="stor-spec-k">EAF frequency:</span> 1 reading/second from furnace PLC — edge-aggregated to 1-minute batches before cloud write</div>
+      <div class="stor-spec"><span class="stor-spec-k">Consumers:</span> All 35 agents subscribe to relevant topics — A-07 receives all spectrometry.results</div>
+    </div>
+  </div>
+  <div class="stor-card" style="border-top:3px solid var(--red)">
+    <div class="stor-icon">🔒</div>
+    <div class="stor-name">Immutable Audit Store</div>
+    <div class="stor-type" style="color:var(--red)">AWS S3 Object Lock · 10-Year Write-Once Archive</div>
+    <div class="stor-desc">All Heat records, Mill Test Certificates, recycled content certificates, PPAP submission packages, CSRD filings and metallurgist approval records written to S3 Object Lock WORM storage. SHA-256 hashes stored in the graph — any tampering with the S3 record is detectable by hash mismatch. The 10-year retention covers the automotive warranty period and ELV Directive compliance window.</div>
+    <div class="stor-specs">
+      <div class="stor-spec"><span class="stor-spec-k">Retention:</span> 10 years minimum — covers EU automotive warranty + ELV Directive compliance window</div>
+      <div class="stor-spec"><span class="stor-spec-k">Key documents:</span> Mill Test Certificates (MTC), PPAP packages, metallurgist approval records, CSRD evidence</div>
+      <div class="stor-spec"><span class="stor-spec-k">Lock mode:</span> Compliance mode — not deletable by any user, role or root during retention period</div>
+      <div class="stor-spec"><span class="stor-spec-k">Written by:</span> Agent A-03 (Audit Trail) wraps every graph mutation — all Heat approvals permanently archived</div>
+      <div class="stor-spec"><span class="stor-spec-k">Encryption:</span> AES-256 at rest, TLS 1.3 in transit, KMS-managed keys, EU data residency</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><div class="sn">20</div><div class="sl">Node Types<br>in the Steel Graph</div></div>
+  <div class="stat-item"><div class="sn s">46</div><div class="sl">Relationship<br>Types Defined</div></div>
+  <div class="stat-item"><div class="sn t">7</div><div class="sl">Semantic<br>Graph Layers</div></div>
+  <div class="stat-item"><div class="sn">35</div><div class="sl">Agents Reading<br>&amp; Writing</div></div>
+  <div class="stat-item"><div class="sn s">7</div><div class="sl">Graph Hops<br>Gear → ELV VIN</div></div>
+  <div class="stat-item"><div class="sn t">&lt;50ms</div><div class="sl">Full Traceability<br>Query Time</div></div>
+  <div class="stat-item"><div class="sn p">∞</div><div class="sl">Tramp Element<br>Trend History Depth</div></div>
+  <div class="stat-item"><div class="sn r">10yr</div><div class="sl">Immutable Audit<br>Retention Period</div></div>
+</div>
+
+<div class="footer">
+  <div class="footer-brand">Circular Intelligence &nbsp;·&nbsp; Powered by <span>MANJU</span></div>
+  <div class="legend">
+    <div class="li"><div class="ld" style="background:var(--orange)"></div>Physical Steel Flow</div>
+    <div class="li"><div class="ld" style="background:var(--teal)"></div>Provenance &amp; Custody</div>
+    <div class="li"><div class="ld" style="background:var(--gold)"></div>Chemistry &amp; Tramp Elements</div>
+    <div class="li"><div class="ld" style="background:var(--amber)"></div>Compliance &amp; Regulatory</div>
+    <div class="li"><div class="ld" style="background:var(--green)"></div>Carbon PCF Layer</div>
+    <div class="li"><div class="ld" style="background:var(--mint)"></div>Digital Passport Layer</div>
+    <div class="li"><div class="ld" style="background:var(--gold)"></div>Agent Audit Layer</div>
+  </div>
+  <div class="footer-copy">MANJU Steel Knowledge Graph &nbsp;·&nbsp; v1.0 &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; Confidential</div>
+</div>
+
+<script>
+(function() {
+  function drawConnectors() {
+    var svg    = document.getElementById('connectorSvg');
+    var canvas = svg.closest('.graph-canvas');
+    var hub    = document.getElementById('kg-hub');
+    if (!svg || !canvas || !hub) return;
+
+    // Remove all previously drawn lines (keep <defs>)
+    var children = Array.from(svg.childNodes);
+    children.forEach(function(c) { if (c.tagName === 'line') svg.removeChild(c); });
+
+    var cr = canvas.getBoundingClientRect();
+
+    function centre(el) {
+      var r = el.getBoundingClientRect();
+      return { x: r.left - cr.left + r.width / 2, y: r.top - cr.top + r.height / 2 };
+    }
+
+    var hub_c = centre(hub);
+
+    // [id, colour, dashed, markerSuffix]
+    var nodes = [
+      ['node-heat',        '#E67E22', false, 'orange'],
+      ['node-regulation',  '#E63946', true,  'red'   ],
+      ['node-facility',    '#028090', true,  'teal'  ],
+      ['node-scrap',       '#E67E22', false, 'orange'],
+      ['node-billet',      '#F4A261', false, 'amber' ],
+      ['node-dpp',         '#02C39A', true,  'mint'  ],
+      ['node-steelpart',   '#7F8C9A', false, 'steel' ],
+      ['node-carbon',      '#48BB78', true,  'green' ],
+      ['node-chemistry',   '#F1C40F', true,  'gold'  ],
+      ['node-vehicle',     '#378ADD', false, 'blue'  ],
+      ['node-certificate', '#9B59B6', true,  'purple'],
+      ['node-agentaction', '#F1C40F', true,  'gold'  ],
+    ];
+
+    svg.setAttribute('width',  cr.width);
+    svg.setAttribute('height', cr.height);
+    svg.style.width  = cr.width  + 'px';
+    svg.style.height = cr.height + 'px';
+
+    nodes.forEach(function(n) {
+      var el = document.getElementById(n[0]);
+      if (!el) return;
+      var nc  = centre(el);
+      var dx  = hub_c.x - nc.x, dy = hub_c.y - nc.y;
+      var len = Math.sqrt(dx*dx + dy*dy);
+      if (len < 1) return;
+      var ux = dx/len, uy = dy/len;
+      var x1 = nc.x    + ux * 6;
+      var y1 = nc.y    + uy * 6;
+      var x2 = hub_c.x - ux * 68;
+      var y2 = hub_c.y - uy * 68;
+      var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', x1.toFixed(1));
+      line.setAttribute('y1', y1.toFixed(1));
+      line.setAttribute('x2', x2.toFixed(1));
+      line.setAttribute('y2', y2.toFixed(1));
+      line.setAttribute('stroke', n[1]);
+      line.setAttribute('stroke-width', n[2] ? '1.2' : '1.6');
+      line.setAttribute('fill', 'none');
+      line.setAttribute('opacity', n[2] ? '0.40' : '0.55');
+      line.setAttribute('marker-end', 'url(#arr-' + n[3] + ')');
+      if (n[2]) {
+        line.setAttribute('stroke-dasharray', '5 4');
+        line.style.animation = 'dashFlow 3s linear infinite';
+      }
+      svg.appendChild(line);
+    });
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    requestAnimationFrame(drawConnectors);
+  } else {
+    document.addEventListener('DOMContentLoaded', function() { requestAnimationFrame(drawConnectors); });
+  }
+  window.addEventListener('resize', drawConnectors);
+  window.addEventListener('load',   function() { requestAnimationFrame(drawConnectors); });
+})();
+</script>
+</body>
+</html>
