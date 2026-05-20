@@ -27,6 +27,16 @@ export default function App() {
         }
       />
 
+      <Route
+        path="/kingmakermodel"
+        element={
+          <StaticHtmlPage
+            title="The Kingmaker — Mode 3"
+            srcPath="/kingmaker-mode3-frontend.html"
+          />
+        }
+      />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
