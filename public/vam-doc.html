@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MatNEXT 付加価値モジュール — 鉄鋼バリューチェーン 統合版 日本語版</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo','Yu Gothic',sans-serif;
+  background:#fafafa;color:#212121;font-size:14px;line-height:1.75}
+#toc-sidebar{position:fixed;top:0;left:0;width:220px;height:100vh;overflow-y:auto;
+  background:#1a237e;color:#c5cae9;padding:1rem;z-index:100}
+#toc-sidebar h3{color:#fff;font-size:.85rem;font-weight:500;margin-bottom:.75rem;
+  border-bottom:1px solid #3949ab;padding-bottom:.4rem}
+.toc-link{display:block;font-size:.76rem;color:#9fa8da;text-decoration:none;
+  padding:.25rem 0;transition:color .15s}
+.toc-link:hover{color:#fff}
+.toc-sect{font-size:.7rem;color:#5c6bc0;padding:.15rem 0 .15rem .6rem;text-decoration:none;display:block}
+.toc-sect:hover{color:#9fa8da}
+#main{margin-left:220px;max-width:1000px}
+.cover{background:#1b5e20;color:#fff;padding:2.5rem 3rem;text-align:center}
+.cover h1{font-size:2rem;font-weight:400;letter-spacing:.08em;margin-bottom:.4rem}
+.cover .sub{color:#a5d6a7;font-size:1rem;margin:.3rem 0}
+.cover .chain{color:#c8e6c9;font-size:.82rem;margin-top:.8rem;line-height:2}
+.part-divider{color:#fff;font-size:1.3rem;font-weight:400;padding:1.5rem 2rem;
+  letter-spacing:.06em;margin-top:1.5rem}
+.content-area{padding:1.5rem 2.5rem}
+h2{font-size:1.1rem;color:#1b5e20;font-weight:500;margin:1.5rem 0 .6rem;
+  padding:.4rem .8rem;background:#e8f5e9;border-left:4px solid #2e7d32;border-radius:0 4px 4px 0}
+h3{font-size:.95rem;color:#1a237e;font-weight:500;margin:1.2rem 0 .4rem;
+  padding:.3rem .7rem;background:#e8eaf6;border-left:3px solid #3949ab;border-radius:0 3px 3px 0}
+h4{font-size:.88rem;color:#004d40;font-weight:500;margin:1rem 0 .3rem;
+  padding:.25rem .6rem;border-left:2px solid #00695c}
+p{font-size:.88rem;margin:.4rem 0;line-height:1.8;color:#333}
+ul{margin:.3rem 0 .3rem 1.4rem}
+li{font-size:.87rem;margin:.25rem 0;line-height:1.7;color:#444}
+.tbl-wrap{overflow-x:auto;margin:.75rem 0;border-radius:4px;border:1px solid #e0e0e0}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th{background:#1a237e;color:#fff;padding:.45rem .7rem;text-align:left;font-weight:500;white-space:nowrap}
+td{padding:.35rem .7rem;border:1px solid #e0e0e0;vertical-align:top}
+tr:nth-child(even) td{background:#f5f5f5}
+.kpi-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.72rem;font-weight:600;margin-right:.3rem}
+.v10{background:#e8f5e9;color:#1b5e20}
+.v11{background:#e8eaf6;color:#1a237e}
+.v12{background:#e0f2f1;color:#004d40}
+.status-ok{background:#e8f5e9;color:#1b5e20;padding:1px 6px;border-radius:3px;font-size:.72rem}
+.status-warn{background:#fff3e0;color:#e65100;padding:1px 6px;border-radius:3px;font-size:.72rem}
+.status-err{background:#ffebee;color:#c62828;padding:1px 6px;border-radius:3px;font-size:.72rem}
+.chain-box{border:1px solid #c8e6c9;background:#f1f8e9;border-radius:6px;padding:1rem 1.25rem;margin:.75rem 0}
+.chain-box p{color:#2e7d32;font-size:.9rem}
+footer{margin:3rem 0 1rem;padding:1rem 2.5rem;text-align:center;font-size:.78rem;color:#888;
+  border-top:1px solid #e0e0e0}
+@media print{
+  #toc-sidebar{display:none}
+  #main{margin-left:0}
+  .part-divider{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  h2,h3,h4{page-break-after:avoid}
+  table{page-break-inside:avoid}
+}
+@media(max-width:680px){
+  #toc-sidebar{display:none}
+  #main{margin-left:0}
+  .content-area{padding:1rem}
+}
+</style>
+</head>
+<body>
+
+<nav id="toc-sidebar" aria-label="目次">
+<h3>目次</h3>
+<a class="toc-link" href="#cover">📄 表紙・統合版概要</a>
+<div style="margin:.6rem 0;border-top:1px solid #3949ab"></div>
+<div style="font-size:.68rem;color:#5c6bc0;padding:.2rem 0;font-weight:500;text-transform:uppercase;letter-spacing:.05em">統合版サマリー</div>
+<a class="toc-sect" href="#cover-summary">統合版について</a>
+<a class="toc-sect" href="#kpi-table">歩留まり指標フレームワーク</a>
+<a class="toc-sect" href="#chain-yield">チェーン歩留まり効率マクロ</a>
+<div style="margin:.6rem 0;border-top:1px solid #3949ab"></div>
+<div style="font-size:.68rem;color:#5c6bc0;padding:.2rem 0;font-weight:500;text-transform:uppercase;letter-spacing:.05em">アーキテクチャ・計画</div>
+<a class="toc-sect" href="#module-arch">サブモジュール一覧（M1–M8）</a>
+<a class="toc-sect" href="#phasing">フェーズと実施計画</a>
+<div style="margin:.6rem 0;border-top:1px solid #3949ab"></div>
+<div style="font-size:.68rem;color:#5c6bc0;padding:.2rem 0;font-weight:500;text-transform:uppercase;letter-spacing:.05em">v1.2 確認済みデータ</div>
+<a class="toc-sect" href="#ttss-data">TTSS確認済みデータクラスター</a>
+<div style="margin:.6rem 0;border-top:1px solid #3949ab"></div>
+<div style="font-size:.68rem;color:#5c6bc0;padding:.2rem 0;font-weight:500;text-transform:uppercase;letter-spacing:.05em">商業価値・根拠</div>
+<a class="toc-sect" href="#commercial">商業価値サマリー（v1.2）</a>
+<a class="toc-sect" href="#risks">主要リスク要因（v1.2）</a>
+<a class="toc-sect" href="#justifications">達成可能性の根拠（8項目）</a>
+</nav>
+
+<div id="main">
+<div class="cover" id="cover">
+  <div style="font-size:1.1rem;color:#a5d6a7;margin-bottom:.4rem;letter-spacing:.12em">MatNEXT</div>
+  <h1>付加価値モジュール</h1>
+  <div class="sub">AIネイティブ プロセス・素材・歩留まり最適化 — 鉄鋼バリューチェーン</div>
+  <div class="sub" style="margin-top:.3rem">
+    <span class="kpi-badge v10">v1.0</span>
+    <span class="kpi-badge v11">v1.1</span>
+    <span class="kpi-badge v12">v1.2</span>
+    &nbsp;統合版
+  </div>
+  <div class="chain">
+    サプライチェーン：TATA &nbsp;•&nbsp; JCAPCPL &nbsp;•&nbsp; JSW &nbsp;•&nbsp; POSCO-M &nbsp;•&nbsp; NSC &nbsp;•&nbsp; JFE<br>
+    ↓<br>
+    TTSS — トヨタ通商スチールサービスインディア（Tier-2 / 鉄鋼ブランキング）<br>
+    ↓<br>
+    Toyotetsu India &nbsp;•&nbsp; JBM Ogihara（Tier-1 / プレス加工）<br>
+    ↓<br>
+    トヨタ・キルロスカー・モーターズ（TKM）— OEM
+  </div>
+</div>
+
+<div class="content-area">
+
+<h2 id="cover-summary">統合版について</h2>
+<p>本書は、MatNEXT 付加価値モジュール — 鉄鋼バリューチェーン の3つのバージョンをすべて1つのファイルにまとめたものです。3バージョンすべての内容が完全に保存されています。各バージョンはモジュール設計・データ要件・商業フレームワークの段階的な発展を示しています。</p>
+
+<div class="tbl-wrap"><table>
+<tr><th>部</th><th>バージョン</th><th>ページ数</th><th>主要内容・変更点</th></tr>
+<tr><td><strong>第1部</strong></td><td><span class="kpi-badge v10">v1.0</span></td><td>42ページ</td><td>初期設計文書。イントロダクションとモジュールコンセプト。バリューチェーンアーキテクチャ。レイヤー別最適化機会（4レイヤー、14機会）。6サブモジュールアーキテクチャ（M1–M6）。M1–M6の詳細データ要件。商業価値詳細分析（全ユーザー）。統合価値サマリーと根拠。チェーン合計：年間₹44.2クロール。</td></tr>
+<tr><td><strong>第2部</strong></td><td><span class="kpi-badge v11">v1.1</span></td><td>50ページ</td><td>歩留まり最適化が主要目標として追加。新しい歩留まり指標フレームワーク（7KPI：HCY、SIY、MY、BQY、PFTQ、FAY、AFR）。2つの新サブモジュール：M7プロアクティブサプライヤー歩留まり配分、M8ブランク品質歩留まり最適化装置。既存6モジュールをすべて歩留まり目標向けに更新。フェーズ計画更新（3フェーズ）。FAYおよびBQYの商業価値追加。チェーン合計：年間₹65.9クロール。</td></tr>
+<tr><td><strong>第3部</strong></td><td><span class="kpi-badge v12">v1.2</span></td><td>45ページ</td><td>TTSS確認済みデータ更新。TTSSの5クラスターにわたる18データフィールドが確認済み。12の新フィールド追加。5つのステータスアップグレード。重要発見：歩留まり率がモデル+バリアント+部品番号レベルですでに追跡済み。M7向け製造所レベル粒度（生産拠点+ミル）。M8ブレードモデル向け工程タイプ確認済み。最大の導入リスク（M3 ROI帰属）が消除。</td></tr>
+</table></div>
+
+<h2 id="kpi-table">歩留まり指標フレームワーク（セクション2 — v1.1 新規）</h2>
+<div class="tbl-wrap"><table>
+<tr><th>コード</th><th>歩留まりタイプ</th><th>レイヤー / ノード</th><th>現状ベンチマーク</th><th>v1.2 VAM目標</th><th>主要モジュール</th><th>変化量</th></tr>
+<tr><td><strong>HCY</strong></td><td>溶鋼適合歩留まり</td><td>レイヤー1 — 鉄鋼メーカー</td><td>92–95%</td><td><strong>96–98%</strong></td><td>M1</td><td>+3%</td></tr>
+<tr><td><strong>SIY</strong></td><td>表面検査歩留まり</td><td>レイヤー1 — 鉄鋼メーカー</td><td>87–93%</td><td><strong>92–96%</strong></td><td>M1+M2</td><td>+4%</td></tr>
+<tr><td><strong>MY</strong></td><td>材料歩留まり（ネスティング）</td><td>レイヤー2 — TTSS</td><td>89–91%（v1.2：部品別実績から確認済み）</td><td><strong>91–93.5%</strong></td><td>M3</td><td>+2.5%</td></tr>
+<tr><td><strong>BQY</strong></td><td>ブランク品質歩留まり</td><td>レイヤー2 — TTSS</td><td>97.0–98.5%</td><td><strong>98.5–99.5%</strong></td><td>M8</td><td>+1.5%</td></tr>
+<tr><td><strong>PFTQ</strong></td><td>プレス一発品質</td><td>レイヤー3 — Tier-1</td><td>96.5–97.0%</td><td><strong>97.8–98.5%</strong></td><td>M4+M7</td><td>+1.5%</td></tr>
+<tr><td><strong>FAY</strong></td><td>初品歩留まり</td><td>レイヤー3 — Tier-1</td><td>40–55%</td><td><strong>72–85%</strong></td><td>M4</td><td>+30%</td></tr>
+<tr><td><strong>AFR</strong></td><td>組立適合率（TKM）</td><td>レイヤー4 — TKM</td><td>98.5–99.0%</td><td><strong>99.3–99.7%</strong></td><td>M4+M7</td><td>+0.5%</td></tr>
+</table></div>
+
+<h2 id="chain-yield">チェーン歩留まり効率マクロ</h2>
+<div class="chain-box">
+<p><strong>現状：</strong>48,000t投入/年 → MY 90.0% → 43,200tブランク → BQY 97.8% → 42,250t納品可能 → PFTQ 96.8% → 40,898t良品プレス品</p>
+<p><strong>VAM目標：</strong>48,000t投入/年 → MY 91.5%（M3） → 43,920t → BQY 99.0%（M8） → 43,481t → PFTQ 97.8%（M4+M7） → 42,524t良品プレス品</p>
+<p><strong>チェーン歩留まり改善：</strong>42,524 − 40,898 = 年間1,626トンの追加良品プレス品 = <strong>年間₹11.1クロールの追加産出（投入コスト増加なし）</strong></p>
+</div>
+
+<h2 id="module-arch">サブモジュールアーキテクチャ一覧</h2>
+<div class="tbl-wrap"><table>
+<tr><th>コード</th><th>名称</th><th>歩留まり目標</th><th>主要ユーザー</th><th>v1.1</th><th>v1.2</th></tr>
+<tr><td><strong>M1</strong></td><td>合金レシピアドバイザー</td><td>HCY, SIY, PFTQ</td><td>鉄鋼メーカー</td><td>—</td><td>更新</td></tr>
+<tr><td><strong>M2</strong></td><td>トランプリスクスコアラー</td><td>BQY, PFTQ</td><td>メーカー・TTSS・Tier-1</td><td>更新</td><td>更新</td></tr>
+<tr><td><strong>M3</strong></td><td>ネスティング最適化装置</td><td>MY（材料歩留まり）</td><td>TTSS</td><td>—</td><td>重要更新</td></tr>
+<tr><td><strong>M4</strong></td><td>スプリングバック予測装置</td><td>PFTQ, FAY</td><td>Tier-1</td><td>更新</td><td>—</td></tr>
+<tr><td><strong>M5</strong></td><td>グレード代替エンジン</td><td>PFTQ（供給障害時）</td><td>Tier-1</td><td>—</td><td>更新</td></tr>
+<tr><td><strong>M6</strong></td><td>カーボン・リサイクル素材ルーター</td><td>PFTQ制約+炭素</td><td>TKM・MatNEXT</td><td>更新</td><td>更新</td></tr>
+<tr><td><strong>M7</strong></td><td>プロアクティブサプライヤー歩留まり配分</td><td>PFTQ, FAY</td><td>Tier-1・TKM</td><td>新規</td><td>更新</td></tr>
+<tr><td><strong>M8</strong></td><td>ブランク品質歩留まり最適化装置</td><td>BQY</td><td>TTSS</td><td>新規</td><td>更新</td></tr>
+</table></div>
+
+<h2 id="phasing">フェーズと実施計画</h2>
+<div class="tbl-wrap"><table>
+<tr><th>フェーズ</th><th>期間</th><th>主要サブモジュール</th><th>v1.2 TTSSデータによる影響</th></tr>
+<tr><td><strong>フェーズ1</strong></td><td>第1〜6ヶ月</td><td>M3（MY）、M2（BQY+PFTQ）、M8A（BQY）</td><td>M3・M2・M8Aの主要データ入力がすべてTTSSにすでに存在。フェーズ1はデータ収集ではなく実データ分析から開始。M3初週に部品+モデル+バリアント別の過去歩留まり分析を生成。</td></tr>
+<tr><td><strong>フェーズ2</strong></td><td>第6〜12ヶ月</td><td>M4（PFTQ+FAY）、M5、M8B（BQY）</td><td>Tier-1プレスデータ統合が重要な新規工程。M8Bは工程タイプが必要 — TTSSで確認済みのため最初から正確なモデル設計が可能。M5はTTSSのミル+生産拠点データを使用。</td></tr>
+<tr><td><strong>フェーズ3</strong></td><td>第12〜24ヶ月</td><td>M7（PFTQ+FAY）、M1 HCY拡張、M6更新</td><td>v1.2：TTSS過去歩留まり率（ミル+グレード+部品番号別）により早期学習データを提供。M7タイムラインが12ヶ月から8〜10ヶ月に短縮。</td></tr>
+</table></div>
+
+<h2 id="ttss-data">v1.2 TTSS確認済みデータクラスター</h2>
+<p>TTSSで現在収集・利用可能であることが確認された18データフィールド（5クラスター）：</p>
+<div class="tbl-wrap"><table>
+<tr><th>データクラスター</th><th>確認済みフィールド</th><th>v1.2ステータス</th><th>戦略的価値</th></tr>
+<tr><td><strong>モデル＆部品詳細</strong></td><td>Sl.no、モデル、バリアント、部品番号</td><td><span class="status-ok">✅ 確認済み（新規）</span></td><td>全モジュールがモデル+バリアントレベルで動作可能</td></tr>
+<tr><td><strong>顧客詳細</strong></td><td>生産拠点、受託加工業者</td><td><span class="status-ok">✅ 確認済み（新規）</span></td><td>製造所レベルのメーカートレーサビリティ</td></tr>
+<tr><td><strong>ミル＆仕様詳細</strong></td><td>ミル、グレード、コーティング</td><td><span class="status-ok">✅ 確認済み</span></td><td>M7がミルレベルでランキング可能</td></tr>
+<tr><td><strong>使用サイズ（ブランク）</strong></td><td>板厚、幅、長さ、長さ-1、長さ-2、形状、正味Kg/台</td><td><span class="status-ok">✅ 確認済み（一部新規・一部アップグレード）</span></td><td>全ブランク形状フィールド確認済み — M3が直接読み込み可能</td></tr>
+<tr><td><strong>原材料サイズ</strong></td><td>T（板厚）、W（幅）、コイル、グロスKg/台、<strong>歩留まり率</strong>、工程タイプ、総グロス使用量MT</td><td><span class="status-ok">✅ 確認済み（歩留まり率：重要アップグレード）</span></td><td><strong>歩留まり率がTTSSですでに計算済み — M3ベースラインが初日から存在</strong></td></tr>
+</table></div>
+
+<h2 id="commercial">商業価値サマリー（v1.2）</h2>
+<div class="tbl-wrap"><table>
+<tr><th>ユーザー</th><th>主要モジュール</th><th>v1.2 基本ケース（₹クロール/年）</th><th>v1.2 楽観ケース（₹クロール/年）</th></tr>
+<tr><td><strong>TTSS</strong></td><td>M3, M2, M8</td><td>10.5</td><td>15.5</td></tr>
+<tr><td><strong>Toyotetsu India</strong></td><td>M4, M5, M7</td><td>6.6</td><td>9.0</td></tr>
+<tr><td><strong>JBM Ogihara</strong></td><td>M4, M5, M7, M2</td><td>7.9</td><td>10.7</td></tr>
+<tr><td><strong>タタ・スチール</strong></td><td>M1（HCY+ミルレベル）</td><td>7.6</td><td>10.0</td></tr>
+<tr><td><strong>JCAPCPL</strong></td><td>M2, M1</td><td>11.8</td><td>17.0</td></tr>
+<tr><td><strong>JSW スチール</strong></td><td>M1（ミルレベル）</td><td>7.6</td><td>10.0</td></tr>
+<tr><td><strong>POSCO-M</strong></td><td>M1, M5, M7</td><td>3.0</td><td>4.0</td></tr>
+<tr><td><strong>NSC</strong></td><td>M1, M6, M7</td><td>3.5</td><td>5.0</td></tr>
+<tr><td><strong>JFE</strong></td><td>M1, M6, M7</td><td>3.5</td><td>5.0</td></tr>
+<tr><td><strong>TKM（直接測定可能）</strong></td><td>M6, M4+M7間接</td><td>3.9</td><td>5.0</td></tr>
+<tr style="font-weight:bold;background:#e8f5e9"><td><strong>チェーン合計 — 直接効果</strong></td><td>全8モジュール</td><td><strong>65.9クロール/年</strong></td><td><strong>91.2クロール/年</strong></td></tr>
+<tr><td>TKMリスク低減</td><td>M6</td><td>₹20〜45クロール/年（回避）</td><td>₹30〜75クロール/年（回避）</td></tr>
+</table></div>
+<p style="font-size:.82rem;color:#666;margin-top:.4rem">チェーン効率改善：21.3%（v1.0の14.2%から向上）。鉄鋼チェーンの総コスト約₹310クロール/年に対し、21.3%の効率向上を意味します。</p>
+
+<h2 id="risks">主要リスク要因（v1.2更新）</h2>
+<div class="tbl-wrap"><table>
+<tr><th>リスク</th><th>価値への影響</th><th>ステータス / 軽減策</th></tr>
+<tr style="background:#e8f5e9"><td><strong>~~TTSSでのコイル追跡不徹底~~（v1.2：消除済み）</strong></td><td>以前：M3 ROI帰属不能</td><td><span class="status-ok">✅ v1.2で消除：TTSSは部品+モデル+バリアントレベルで歩留まり率をすでに追跡。M3 ROIは初日から帰属可能。</span></td></tr>
+<tr><td>Tier-1プレスデータの未デジタル化</td><td>第1年度のM4精度が低い；M7が遅延</td><td>フェーズ2：初日よりルールベースM4。Tier-1にプレスデータロガー設置。ブランク形状はTTSSから事前解決済み。</td></tr>
+<tr><td>TTSSでのM8平坦度・バリ高さ未測定</td><td>M8 パートA学習データなし；レベラーモデル未較正</td><td>オンボーディング条件としてTTSSにコイルごとの平坦度サンプリング開始を要求。3ヶ月でベースライン確立。</td></tr>
+<tr><td>メーカーが圧延工程パラメータ共有に難色</td><td>M1 HCYモデルが不完全</td><td>初期はMTCデータのみ使用。圧延工程データ共有はフェーズ3で交渉。</td></tr>
+<tr><td>M7のM4データ要件（12ヶ月→8〜10ヶ月に短縮）</td><td>M7効果の遅延</td><td>v1.2：TTSS過去歩留まり率（ミル+部品番号別）により早期学習データを提供。M7タイムラインが8〜10ヶ月に短縮。</td></tr>
+<tr><td>Tier-1・TTSSでのAIガイドパラメータへの文化的抵抗</td><td>M4・M8の採用率が低い</td><td>エンジニア支援ツールとして位置づけ。オペレーターが全て承認。最初の3ヶ月で並行比較による信頼構築。</td></tr>
+<tr><td>TTSSの外注加工業者フィールド — 中間加工業者トレーサビリティギャップ</td><td>M1/M2/M7が中間加工業者の寄与を見逃す</td><td>v1.2新規：外注加工業者がTTSSで追跡開始。外注加工業者が存在する場合、そのノードへの追加MTC連結が必要。</td></tr>
+</table></div>
+
+<h2 id="justifications">達成可能性の根拠（8項目）</h2>
+<ol style="margin:0.5rem 0 0.5rem 1.5rem;font-size:.87rem;line-height:2">
+<li><strong>データはすでに存在しているが、サイロ化されている。</strong>必要な学習データはすべて各ノードで毎日生成されています。MatNEXTがその連結役を担います。</li>
+<li><strong>成形性の物理法則は十分に理解されている。</strong>スプリングバック予測は製造業において最も検証されたML応用の1つです。6〜9ヶ月の生産データ内で±0.3〜0.5mmの精度が達成可能。</li>
+<li><strong>ネスティング最適化は同等のコンテキストで実証済みのROIを持つ。</strong>1.5〜3.0%のMY改善が記録されています。TTSSの確認済み非矩形ブランクデータ（L1、L2、形状）は改善可能性が範囲の上限にあることを意味します。</li>
+<li><strong>レベラー設定誤りによるBQY損失は系統的であり修正可能。</strong>工程タイプの確認により、M8のブレード摩耗モデルが最初から正確に構築されます。</li>
+<li><strong>JCAPCPLのスクラップ最適化削減額は最も根拠のある数値。</strong>直接的な投入コスト計算。コーティングフィールドの確認により、コーティング種別ごとのCu閾値がより正確になります。</li>
+<li><strong>M7のメーカー間歩留まり差異は実在し、文書化されている。</strong>業界文献において、異なるメーカーの名目上同等のグレード間で0.5〜2.5パーセントポイントの歩留まり差異が記録されています。ミルレベルデータによりTTSSで測定可能であることが確認されました。</li>
+<li><strong>TTSSデータの確認により最大の単一導入リスクが廃止。</strong>歩留まり率はTTSSで部品+モデル+バリアントレベルですでに追跡されています。M3 ROIは初日から即座に帰属可能です。</li>
+<li><strong>チェーン効率改善21.3%は段階的に達成可能。</strong>フェーズ1のみで（M3+M2+M8A）₹14.1クロール/年の効果。全リスクに具体的な軽減策があり、投資対効果は17〜35倍（基本ケース）。</li>
+</ol>
+
+</div><!-- content-area -->
+
+<footer>
+  MatNEXT 付加価値モジュール — 鉄鋼バリューチェーン 統合版 日本語版 &nbsp;|&nbsp;
+  GenbaNEXT Technologies Private Limited &nbsp;|&nbsp; matnext.in &nbsp;|&nbsp; 機密
+</footer>
+</div><!-- main -->
+</body>
+</html>

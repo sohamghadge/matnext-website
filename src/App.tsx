@@ -37,6 +37,16 @@ export default function App() {
         }
       />
 
+      <Route
+        path="/vam-doc"
+        element={
+          <StaticHtmlPage
+            title="MatNEXT VAM Compiled Edition JP"
+            srcPath="/vam-doc.html"
+          />
+        }
+      />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
